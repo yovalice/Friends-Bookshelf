@@ -1,0 +1,53 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap-grid.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap-reboot.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    {% block extra_css %}{% endblock extra_css %}
+</head>
+<body>
+    <nav id="header" class="navbar navbar-default" role="navigation">
+
+        <div id="header-left" class="navbar-header">
+            <!-- <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button> -->
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img class="logo-img" src="{% static 'img/logo2.png' %}" alt="Logo">
+            </a>
+        </div>
+        <!-- <div id="navbar" class="collapse navbar-collapse header-right">
+            <ul class="nav nav-tabs" role="tablist">
+                <li>
+                    <a href="">
+                        <h3>Register</h3>
+                    </a>
+                </li>
+            </ul>
+        </div> -->
+    </nav>
+
+    <div class="container">
+        {% block content %} {% endblock content %}
+    </div>
+
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/common.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

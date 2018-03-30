@@ -1,0 +1,9 @@
+.navbar-header img{
+  width: 150px;
+}
+.navbar {
+    background-color: #D5D5D5;
+    padding:0px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
