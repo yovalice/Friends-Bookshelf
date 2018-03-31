@@ -1,0 +1,16 @@
+{% extends "common/base.html" %}
+
+{% block title %}User Information{% endblock %}
+
+{% block content %}
+<h2>User Iformation</h2>
+
+{{ error_message }}
+<form method="POST" action="{% url 'user_information' %}">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+
+    <button class="btn-primary">Submit</button>
+</form>
+{% endblock %}

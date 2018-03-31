@@ -12,7 +12,7 @@ class Book(models.Model):
 
 
 class BookWish(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     book = models.ForeignKey('books.Book', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -20,7 +20,7 @@ class BookWish(models.Model):
 
 
 class BooksRead(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     book = models.ForeignKey('books.Book', on_delete=models.CASCADE)
     liked = models.BooleanField()
 

@@ -1,0 +1,17 @@
+{% extends "common/base.html" %} 
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+
+{{ error_message }}
+<form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <button class="btn-primary">Submit</button>
+
+    <a href="{% url 'forgot' %}">Forgot Password?</a>
+</form>
+{% endblock %}
