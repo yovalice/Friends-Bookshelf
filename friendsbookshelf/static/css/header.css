@@ -1,4 +1,4 @@
-.navbar-header img{
+.navbar img{
   width: 150px;
 }
 .navbar {
@@ -6,4 +6,14 @@
     padding:0px;
     padding-left: 50px;
     padding-right: 50px;
+}
+.btn-outline{
+  color: #96858F;
+  border-color: #96858F;
+  background-color: transparent;
+}
+.btn-outline:hover{
+  color: white;
+  border-color: #96858F;
+  background-color: #96858F;
 }
