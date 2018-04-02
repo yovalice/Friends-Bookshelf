@@ -1,0 +1,21 @@
+{% extends "common/base.html" %} 
+
+{% block title %}Books{% endblock %}
+
+{% block content %}
+    <h2>Books</h2>
+
+    Total books: {{ books.totalItems }}
+    
+    <div class="row">
+        {% for book in books.items %}
+            <a href="{% url 'books_detail' book.id %}">
+                <div class="colxs-12 col-sm-6 col-md-4">
+                    <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                    <p><b>{{ book.volumeInfo.title }}</b></p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+{% endblock %}

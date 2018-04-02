@@ -1,4 +1,5 @@
 {% extends "common/base.html" %}
+{% load bootstrap4 %}
 
 {% block title %}Forgot{% endblock %}
 
@@ -8,9 +9,11 @@
 {{ error_message }}
 <form method="POST" action="{% url 'forgot' %}">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% bootstrap_form form %}
 
-    <button class="btn-primary">Submit</button>
+    {% buttons %} 
+        <button class="btn btn-primary">Submit</button>
+    {% endbuttons %}
 </form>
 
 {% endblock %}

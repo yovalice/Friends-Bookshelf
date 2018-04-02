@@ -1,4 +1,5 @@
 {% extends "common/base.html" %} 
+{% load bootstrap4 %}
 
 {% block title %}Register{% endblock %}
 
@@ -6,12 +7,14 @@
 <h2>Login</h2>
 
 {{ error_message }}
-<form method="POST" action="{% url 'login' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    
-    <button class="btn-primary">Submit</button>
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        
+        {% buttons %}    
+            <button class="btn btn-primary">Submit</button>
+        {% endbuttons %}
 
-    <a href="{% url 'forgot' %}">Forgot Password?</a>
-</form>
+        <a href="{% url 'forgot' %}">Forgot Password?</a>
+    </form>
 {% endblock %}

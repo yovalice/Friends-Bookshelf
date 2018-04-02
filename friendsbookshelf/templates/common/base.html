@@ -9,6 +9,7 @@
   <title>{% block title %}{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <script type="application/javascript" src="{% static 'js/fontawesome-all.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap-grid.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap-reboot.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
@@ -77,10 +78,10 @@
     </div>
   </footer>
 
-  <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-  <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
-  <script src="{% static 'js/common.js' %}"></script>
+  <script type="application/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+  <script type="application/javascript" src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+  <script type="application/javascript" src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
+  <script type="application/javascript" src="{% static 'js/common.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
 

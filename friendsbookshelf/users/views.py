@@ -4,6 +4,7 @@ from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect
 from django import forms
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 from .forms import UserLoginForm
 from .forms import UserRegisterForm
@@ -11,6 +12,8 @@ from .forms import UserForgotForm
 from .forms import UserConfirmationPasswordForm
 from .forms import UserInformationForm
 from .models import User
+from books.models import BooksRead, BookWish
+from main_app.models import Post
 
 
 def register(request):
@@ -63,20 +66,6 @@ def login(request):
     return render(request, 'users/login.html', {'form': form})
 
 
-def user_information(request):
-    if request.method == 'POST':
-        form = UserInformationForm(request.POST)
-        if form.is_valid():
-            password1 = form.cleaned_data['password1']
-            password2 = form.cleaned_data['password2']
-
-            return render(request, 'users/user_information.html', {'form': form})
-    else:
-        form = UserInformationForm()
-
-    return render(request, 'users/user_information.html', {'form': form})
-
-
 def forgot(request):
     if request.method == 'POST':
         form = UserForgotForm(request.POST)
@@ -109,3 +98,32 @@ def confirm_password(request):
     else:
         form = UserConfirmationPasswordForm()
     return render(request, 'users/confirm.html', {'form': form})
+
+
+@login_required
+def edit_user_information(request):
+    if request.method == 'POST':
+        form = UserInformationForm(request.POST)
+        if form.is_valid():
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+
+            return render(request, 'users/edit_user_information.html', {'form': form})
+    else:
+        form = UserInformationForm()
+
+    return render(request, 'users/edit_user_information.html', {'form': form})
+
+
+@login_required
+def user_details(request, id):
+    user = User.objects.get(id=id)
+
+    books_read = BooksRead.objects.filter(user=user)[:10]
+
+    posts = Post.objects.filter(user=user)[:8]
+
+    data = {'user': user, 'books_read': books_read,
+            'posts': posts}
+
+    return render(request, 'users/user_details.html', data)
