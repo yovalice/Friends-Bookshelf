@@ -2,10 +2,10 @@
   width: 150px;
 }
 .navbar {
-    background-color: #D5D5D5;
+    background-color: rgb(231,231,231);
     padding:0px;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding: 0px 40px;
+    box-shadow: 0px 5px 8px #aaa;
 }
 .btn-outline{
   color: #96858F;
@@ -16,4 +16,17 @@
   color: white;
   border-color: #96858F;
   background-color: #96858F;
+}
+.form-inline{
+  margin-right: 30px;
+}
+.nav-link{
+  color: #96858F;
+  font-size: 17px;
+}
+.nav-link:hover{
+  color: #6D7993;
+}
+.navbar-nav{
+  margin-right: 20px;
 }
