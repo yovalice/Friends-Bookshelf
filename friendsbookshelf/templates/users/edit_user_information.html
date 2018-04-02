@@ -1,18 +1,18 @@
 {% extends "common/base.html" %}
 {% load bootstrap4 %}
 
-{% block title %}Confirm Password{% endblock %}
+{% block title %}User Information{% endblock %}
 
 {% block content %}
-    <h2>Confirm Password</h2>
+    <h2>User Iformation</h2>
 
     {{ error_message }}
-    <form method="POST" action="{% url 'forgot' %}">
+    <form method="POST" action="{% url 'user_information' %}">
         {% csrf_token %}
         {% bootstrap_form form %}
-
-        {% buttons %} 
+        
+        {% buttons %}
             <button class="btn btn-primary">Submit</button>
-        {% endbuttons %} 
+        {% endbuttons %}
     </form>
 {% endblock %}

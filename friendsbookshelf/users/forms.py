@@ -30,7 +30,7 @@ class UserRegisterForm(forms.Form):
         label='Username',
         max_length=100
     )
-    email = forms.CharField(
+    email = forms.EmailField(
         required=True,
         label='Email Address',
         max_length=100,
@@ -44,7 +44,7 @@ class UserRegisterForm(forms.Form):
 
 
 class UserForgotForm(forms.Form):
-    email = forms.CharField(
+    email = forms.EmailField(
         required=True,
         label='Email Address',
         max_length=100,
@@ -67,6 +67,10 @@ class UserConfirmationPasswordForm(forms.Form):
 
 
 class UserInformationForm(forms.Form):
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
     first_name = forms.CharField(
         required=True,
         label='First Name',
@@ -77,3 +81,9 @@ class UserInformationForm(forms.Form):
         label='Last Name',
         max_length=32
     )
+    bio = forms.CharField(
+        required=True,
+        label='User Bio',
+        widget=forms.Textarea
+    )
+    gender = forms.ChoiceField(choices=GENDER_CHOICES, required=True)

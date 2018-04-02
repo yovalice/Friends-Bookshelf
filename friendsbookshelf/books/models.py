@@ -4,11 +4,11 @@ from django.contrib.auth.models import User
 
 class Book(models.Model):
     name = models.TextField()
-    isbn = models.IntegerField()
+    google_id = models.CharField(max_length=100)
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.isbn)
+        return self.name + ' - ' + self.google_id
 
 
 class BookWish(models.Model):
@@ -16,7 +16,7 @@ class BookWish(models.Model):
     book = models.ForeignKey('books.Book', on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.book.isbn)
+        return self.book.name + ' - ' + self.book.google_id
 
 
 class BooksRead(models.Model):
@@ -25,4 +25,4 @@ class BooksRead(models.Model):
     liked = models.BooleanField()
 
     def __str__(self):
-        return str(self.book.isbn)
+        return self.book.name + ' - ' + self.book.google_id
