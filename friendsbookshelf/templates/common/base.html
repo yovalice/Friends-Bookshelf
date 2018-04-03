@@ -53,7 +53,11 @@
       {% if user.is_authenticated %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Dropdown
+            {% if user.image_medium %}
+              <img src="{{ user.image_medium.url }}" class="navbar-user-image">
+            {% else %}
+              <i class="fas fa-user"></i>
+            {% endif %}
             </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{% url 'user_information' %}"><i class="fas fa-user"></i> User Info</a>

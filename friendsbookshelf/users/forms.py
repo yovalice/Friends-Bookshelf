@@ -1,5 +1,6 @@
 from django import forms
-
+from string import Template
+from django.utils.safestring import mark_safe
 
 class UserLoginForm(forms.Form):
     username = forms.CharField(
@@ -66,6 +67,12 @@ class UserConfirmationPasswordForm(forms.Form):
     )
 
 
+class PictureWidget(forms.widgets.Widget):
+    def render(self, name, value, attrs=None):
+        html =  Template("""<img src="$link"/>""")
+        return mark_safe(html.substitute(link=value))
+
+
 class UserInformationForm(forms.Form):
     GENDER_CHOICES = (
         ('M', 'Male'),
@@ -84,6 +91,7 @@ class UserInformationForm(forms.Form):
     bio = forms.CharField(
         required=True,
         label='User Bio',
-        widget=forms.Textarea
+        widget=forms.Textarea(attrs={'cols' : "80", 'rows': "4", })
     )
     gender = forms.ChoiceField(choices=GENDER_CHOICES, required=True)
+    image = forms.ImageField()

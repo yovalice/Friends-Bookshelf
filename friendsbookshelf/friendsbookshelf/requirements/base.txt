@@ -1,0 +1,6 @@
+django-appconf==1.0.2
+django-bootstrap4==0.0.6
+django-imagekit==4.0.2
+pilkit==2.0
+Pillow==5.0.0
+six==1.11.0
