@@ -5,13 +5,14 @@ from django.http import HttpResponseRedirect
 from django import forms
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.views.generic.list import ListView
 
 from .forms import UserLoginForm
 from .forms import UserRegisterForm
 from .forms import UserForgotForm
 from .forms import UserConfirmationPasswordForm
 from .forms import UserInformationForm
-from .models import User
+from .models import User, FriendList
 from books.models import BooksRead, BookWish
 from main_app.models import Post
 
@@ -127,3 +128,12 @@ def user_details(request, id):
             'posts': posts}
 
     return render(request, 'users/user_details.html', data)
+
+class Friends(ListView):
+    paginate_by = 20
+    template_name = 'users/friends.html'
+    context_object_name = 'friends'
+
+    def get_queryset(self):
+        friends = FriendList.objects.select_related('friend').filter(user=self.request.user)
+        return friends

@@ -4,15 +4,20 @@
 {% block title %}User Information{% endblock %}
 
 {% block content %}
-    <h2>User Iformation</h2>
+  <div class="box-form col-sm-8 offset-sm-2 col-md-8 offset-md-2">
+    <h2 class="text-center text-lavendar">User Information</h2>
+    <hr/>
 
     {{ error_message }}
     <form method="POST" action="{% url 'user_information' %}">
         {% csrf_token %}
         {% bootstrap_form form %}
-        
+
+      <div class="text-center">
         {% buttons %}
-            <button class="btn btn-primary">Submit</button>
+            <button class="btn btn-lg btn-primary">Submit</button>
         {% endbuttons %}
+      </div>
+    </div>
     </form>
 {% endblock %}

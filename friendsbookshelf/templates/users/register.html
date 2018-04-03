@@ -1,18 +1,24 @@
-{% extends "common/base.html" %} 
+{% extends "common/base.html" %}
 {% load bootstrap4 %}
 
 {% block title %}Register{% endblock %}
 
 {% block content %}
-    <h2>Register</h2>
+
+<div class="box-form col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+    <h2 class="text-center text-lavendar">Register</h2>
+    <hr/>
 
     {{ error_message }}
     <form method="POST" action="{% url 'register' %}">
         {% csrf_token %}
         {% bootstrap_form form %}
-        
+
         {% buttons %}
-            <button class="btn btn-success">Submit</button>
+          <div class="text-center">
+            <button class="btn btn-lg btn-success">Register</button>
+          </div>
         {% endbuttons %}
     </form>
+</div>
 {% endblock %}
