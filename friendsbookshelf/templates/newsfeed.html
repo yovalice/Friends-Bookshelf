@@ -1,0 +1,73 @@
+{% extends "common/base.html" %}
+{% load bootstrap4 %}
+
+{% block title %}Newsfeed{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% url 'home' %}">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+
+        <div class="text-center">
+            {% buttons %}
+                <button class="btn btn-primary">Submit</button>
+            {% endbuttons %}
+        </div>
+    </form>
+
+    {% if posts %}
+        {% for post in posts %}
+            <div class="box-form post">
+                <div class="post information">
+                    <a href="{% url 'user_details' post.user.pk %}">
+                        {% if post.user.image_thumbnail %}
+                            <img src="{{ post.user.image_thumbnail.url }}"/>
+                        {% else %}
+                            <i class="far fa-user"></i>
+                        {% endif %}
+                        <b> {{ post.user.first_name }} {{ post.user.last_name }}</b>
+                    </a>
+                    <div class="post-box">
+                        {{ post.description }}
+                    </div>
+                    <hr/>
+                </div>
+                {% if post.comments.count %}
+                    <div class="comments-box">
+                        {% for comment in post.comments.all %}
+                            <div class="detail-comment-box">
+                                <div class="user-comment-info">
+                                    <a href="{% url 'user_details' comment.user.pk %}">
+                                        {% if comment.user.image_thumbnail %}
+                                            <img src="{{ comment.user.image_thumbnail.url }}"/>
+                                        {% else %}
+                                            <i class="far fa-user"></i>
+                                        {% endif %}
+                                        <b> {{ comment.user.first_name }} {{ comment.user.last_name }}</b>
+                                    </a>
+                                </div>
+                                <div class="user-comment-text">
+                                    {{ comment.text }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <hr />
+                {% endif %}
+
+                <div class="insert-comment-box">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <input type="text" class="inputs-sm">
+                        <button class="btn btn-sm btn-success">Submit</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="">
+            <h4>We don't have any post from your friends, be the first to post something!!</h4>
+        </div>
+    {% endif %}
+
+{% endblock %}

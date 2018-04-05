@@ -6,6 +6,7 @@ from django import forms
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
+from django.utils.decorators import method_decorator
 
 from .forms import UserLoginForm
 from .forms import UserRegisterForm
@@ -120,19 +121,24 @@ def edit_user_information(request):
 def user_details(request, id):
     user = User.objects.get(id=id)
 
-    books_read = BooksRead.objects.filter(user=user)[:10]
-
     posts = Post.objects.filter(user=user)[:8]
+
+    books_read = BooksRead.objects.filter(user=user)[:10]
 
     data = {'user': user, 'books_read': books_read,
             'posts': posts}
 
     return render(request, 'users/user_details.html', data)
 
+
 class Friends(ListView):
     paginate_by = 20
     template_name = 'users/friends.html'
     context_object_name = 'friends'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
         friends = FriendList.objects.select_related('friend').filter(user=self.request.user)

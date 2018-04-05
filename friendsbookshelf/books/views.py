@@ -5,10 +5,11 @@ from django.contrib.auth.decorators import login_required
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
+from books.models import BooksRead, BookWish
+
 api_url = 'https://www.googleapis.com/books/v1/volumes/'
 
 
-# @login_required
 def books_list(request):
     max_results = 40
 
@@ -35,7 +36,7 @@ def books_list(request):
                    'page': page})
 
 
-# @login_required
+@login_required
 def books_detail(request, volume_id):
     book = requests.get(api_url + volume_id).json
 
@@ -43,9 +44,15 @@ def books_detail(request, volume_id):
                   {'book': book})
 
 
+@login_required
 def books_wishlist(request):
-    return render(request, 'books_wishlist.html')
+    BookWish.objects.select_related(
+        'user', 'book').filter(user=request.user)
+    return render(request, 'books/books_wishlist.html')
 
 
+@login_required
 def books_liked(request):
-    return render(request, 'books_liked.html')
+    BooksRead.objects.select_related(
+        'user', 'book').filter(user=request.user)
+    return render(request, 'books/books_liked.html')
