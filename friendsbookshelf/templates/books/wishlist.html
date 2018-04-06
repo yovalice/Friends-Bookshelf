@@ -1,0 +1,17 @@
+{% extends "common/base.html" %}
+{% load extras %}
+
+{% block title %}Books Wishlist{% endblock %}
+
+{% block content %}
+    {% for data in books_wishlist %}
+        {% with data.book.google_id|load_book as book_info %}
+            <a href="{% url 'books_detail' data.book.google_id %}">
+                <div class="colxs-12 col-sm-6 col-md-4">
+                    <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
+                    <p><b>{{ book_info.volumeInfo.title }}</b></p>
+                </div>
+            </a>
+        {% endwith %}
+    {% endfor %}
+{% endblock %}

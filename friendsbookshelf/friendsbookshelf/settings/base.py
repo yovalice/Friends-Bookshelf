@@ -140,3 +140,5 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 AUTH_USER_MODEL = 'users.User'
+
+GOOGLE_BOOKS_API = 'https://www.googleapis.com/books/v1/volumes/'

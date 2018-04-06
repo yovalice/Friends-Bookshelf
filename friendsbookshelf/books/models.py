@@ -14,6 +14,7 @@ class Book(models.Model):
 class BookWish(models.Model):
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     book = models.ForeignKey('books.Book', on_delete=models.CASCADE)
+    created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.book.name + ' - ' + self.book.google_id
@@ -23,6 +24,7 @@ class BooksRead(models.Model):
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     book = models.ForeignKey('books.Book', on_delete=models.CASCADE)
     liked = models.BooleanField()
+    created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.book.name + ' - ' + self.book.google_id
