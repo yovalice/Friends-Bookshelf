@@ -4,7 +4,7 @@
 {% block title %}Books Wishlist{% endblock %}
 
 {% block content %}
-    {% for data in books_wishlist %}
+    {% for data in page_obj.object_list %}
         {% with data.book.google_id|load_book as book_info %}
             <a href="{% url 'books_detail' data.book.google_id %}">
                 <div class="colxs-12 col-sm-6 col-md-4">
@@ -14,4 +14,10 @@
             </a>
         {% endwith %}
     {% endfor %}
+
+    <div class="row">
+        <div class="col-xs-12 mx-auto">
+            {% include "common/pagination.html" %}
+        </div>
+    </div>
 {% endblock %}

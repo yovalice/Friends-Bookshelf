@@ -31,3 +31,10 @@ def home_page(request):
         return render(request, 'newsfeed.html', {'posts': posts, 'form': form})
     else:
         return render(request, 'home.html')
+
+
+def post_comment(request):
+    if request.is_ajax():
+        message = "Yes, AJAX!"
+    else:
+        message = "Not Ajax"

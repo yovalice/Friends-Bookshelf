@@ -1,0 +1,39 @@
+{% if page_obj.has_next or page_obj.has_previous %}
+    <nav class="mx-auto">
+        <ul class="pagination m-b-5">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{{ page_obj.previous_page_number.querystring }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="disabled" class="page-item">
+                    <a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for page in page_obj.pages %}
+                {% if page %}
+                    {% ifequal page page_obj.number %}
+                        <li class="disabled page-item"><a class="page-link" >{{ page }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                    {% endifequal %}
+                {% else %}
+                    <li class="disabled page-item"><a class="page-link">...</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?{{ page_obj.next_page_number.querystring }}" aria-label="Next"><span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+            {% else %}
+                <li class="disabled page-item">
+                  <a class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

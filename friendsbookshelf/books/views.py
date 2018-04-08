@@ -3,8 +3,11 @@ import requests
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.views.generic import ListView
+from django.utils.decorators import method_decorator
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from pure_pagination.mixins import PaginationMixin
 
 from books.models import BooksRead, BookWish
 
@@ -43,15 +46,25 @@ def books_detail(request, volume_id):
                   {'book': book})
 
 
-@login_required
-def BooksWishlist(request):
-    books_wishlist = BookWish.objects.select_related('book').filter(user=request.user)
+class BooksWishlist(PaginationMixin, ListView):
+    template_name = 'books/wishlist.html'
+    paginate_by = 1
 
-    return render(request, 'books/wishlist.html', {'books_wishlist': books_wishlist})
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        return BookWish.objects.select_related('book').filter(user=self.request.user)
 
 
-@login_required
-def BooksLiked(request):
-    books_liked = BooksRead.objects.select_related('user', 'book').filter(user=request.user)
-    
-    return render(request, 'books/liked.html', {'books_liked': books_liked})
+class BooksLiked(PaginationMixin, ListView):
+    template_name = 'books/liked.html'
+    paginate_by = 1
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        return BooksRead.objects.select_related('book').filter(user=self.request.user)
