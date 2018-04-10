@@ -48,8 +48,7 @@ INSTALLED_APPS = [
 
     'bootstrap4',
     'imagekit',
-    'pure_pagination',
-    'autofixture'
+    'pure_pagination'
 ]
 
 MIDDLEWARE = [

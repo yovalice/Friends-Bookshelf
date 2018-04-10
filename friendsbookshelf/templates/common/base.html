@@ -45,7 +45,7 @@
         </li>
         {% endif %}
       </ul>
-      <form class="form-inline my-2 my-lg-0" action="{% url 'books_list' %}" method="POST">
+      <form class="form-inline my-2 my-lg-0" action="{% url 'books_list' %}" method="GET">
         {% csrf_token %}
           <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search" value="{{ q }}">
           <button class="btn btn-outline my-2 my-sm-0" type="submit">Search</button>
@@ -55,7 +55,7 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% if user.image %}
-              <img src="{{ user.image_thumbnail.url }}" class="navbar-user-image">
+              <img src="{{ user.image_thumbnail.url }}" class="navbar-user-image rounded">
             {% else %}
               <i class="fas fa-user"></i>
             {% endif %}

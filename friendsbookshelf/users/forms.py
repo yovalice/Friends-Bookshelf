@@ -78,8 +78,9 @@ class UserInformationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'bio', 'gender', 'image']
-
-# class UserInformationForm(forms.Form):
+        widgets = {
+          'bio': forms.Textarea(attrs={'cols' : "80", 'rows': "3"}),
+        }
 #     GENDER_CHOICES = (
 #         ('M', 'Male'),
 #         ('F', 'Female'),
@@ -94,10 +95,10 @@ class UserInformationForm(forms.ModelForm):
 #         label='Last Name',
 #         max_length=32
 #     )
-#     bio = forms.CharField(
-#         required=True,
-#         label='User Bio',
-#         widget=forms.Textarea(attrs={'cols' : "80", 'rows': "4", })
-#     )
+    bio = forms.CharField(
+        required=True,
+        label='User Bio',
+        widget=forms.Textarea(attrs={'cols' : "80", 'rows': "4", })
+    )
 #     gender = forms.ChoiceField(choices=GENDER_CHOICES, required=True)
 #     image = forms.ImageField()

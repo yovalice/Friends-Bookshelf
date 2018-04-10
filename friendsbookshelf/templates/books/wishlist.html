@@ -6,6 +6,7 @@
 {% block content %}
     <h2>Book Wishlist</h2>
     <hr />
+
     {% if page_obj.object_list.count %}
         <div class="row">
             {% for data in page_obj.object_list %}
