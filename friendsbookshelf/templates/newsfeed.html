@@ -17,9 +17,10 @@
 
     {% if posts %}
         {% for post in posts %}
-            <div class="box-form post">
+            <div class="box-form post" id='{{ post.id }}'>
                 <div class="post information">
                     <a href="{% url 'user_details' post.user.pk %}">
+                        <div></div>
                         {% if post.user.image_thumbnail %}
                             <img src="{{ post.user.image_thumbnail.url }}"/>
                         {% else %}
@@ -56,11 +57,8 @@
                 {% endif %}
 
                 <div class="insert-comment-box">
-                    <form method="POST" action="">
-                        {% csrf_token %}
-                        <input type="text" class="inputs-sm">
-                        <button class="submit-comment btn btn-sm btn-success">Submit</button>
-                    </form>
+                    <input type="text" class="inputs-sm">
+                    <button class="submit-comment btn btn-sm btn-success">Submit</button>
                 </div>
             </div>
         {% endfor %}
@@ -74,19 +72,26 @@
 
 {% block extra_js %}
     <script type="text/javascript">
+        // $(".submit-comment").
+
         $(document).ready(function() {
-            $("#test").submit(function(event){
-                    $.ajax({
-                        type:"POST",
-                        url:"/ajax/comment/",
-                        data: {
-                                'text': $('#test').val()
-                            },
-                        success: function(){
-                            $('#message').html("<h2>Contact Form Submitted!</h2>") 
-                        }
-                    });
-                    return false; //<---- move it here
+            $(".submit-comment").click(function(event){
+                $(this).prop('disabled', true);
+                $.ajax({
+                    type:"POST",
+                    url:"/ajax/comment/",
+                    data: {
+                        'text': $(this).prev().val(),
+                        'post_id': $(this).parents('.post').attr('id')
+                    },
+                    success: function(data){
+                        var append_html = "<div class='detail-comment-box'><div class='user-comment-info'><a href='/user/'{{ user.id }}><img src='{{ user.image_thumbnail.url }}'><b>{{ user.first_name }} {{ user.last_name }}</b></a></div><div class='user-comment-text'>" + data.text + "</div></div>";
+                        $('.comments-box').append(append_html);
+                        $(this).prev().val('');
+                        $(this).prop('disabled', false);
+                    }
+                });
+                return false;
             });
         });
     </script>

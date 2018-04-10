@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 
+from pure_pagination.mixins import PaginationMixin
+
 from .forms import UserLoginForm
 from .forms import UserRegisterForm
 from .forms import UserForgotForm
@@ -131,10 +133,9 @@ def user_details(request, id):
     return render(request, 'users/user_details.html', data)
 
 
-class Friends(ListView):
-    paginate_by = 20
+class Friends(PaginationMixin, ListView):
+    paginate_by = 12
     template_name = 'users/friends.html'
-    context_object_name = 'friends'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

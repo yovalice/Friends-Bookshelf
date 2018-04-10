@@ -12,18 +12,28 @@
       <div class="text-center col-sm-3">
           <img src="{{ book.volumeInfo.imageLinks.large }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
           <div class="text-center">
-            <button class="btn btn-block btn-primary ">Like</button>
+            <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
+              {% csrf_token %}
+              <input type="text" class="hidden d-none" value='True'>
+              <button class="btn btn-block btn-primary" >Like</button>
+            </form>
           </div>
           <div class="text-center">
-            <button class="btn btn-block btn-primary ">Dislike</button>
+            <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
+              {% csrf_token %}
+              <input type="text" class="hidden d-none" value='False'>
+              <button class="btn btn-block btn-primary ">Dislike</button>
+            </form>
           </div>
           <div class="text-center">
-            <button class="btn btn-block btn-primary ">Add to wishlist</button>
+            <form action="{% url 'books_wishlist_post' book.id book.volumeInfo.title %}" method="POST">
+              {% csrf_token %}
+              <button class="btn btn-block btn-primary ">Add to wishlist</button>
+            </form>
           </div>
           <div class="text-center">
             <button class="btn btn-block btn-primary ">Suggest to friend</button>
           </div>
-
       </div>
       <div class="col-sm-8">
           <h2>{{ book.volumeInfo.title }}</h2>

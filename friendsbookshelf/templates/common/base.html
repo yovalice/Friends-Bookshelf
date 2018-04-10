@@ -37,7 +37,7 @@
             <a class="nav-link" href="{% url 'books_wishlist' %}">Books Wishlist</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'books_liked' %}">Books liked</a>
+            <a class="nav-link" href="{% url 'books_liked' %}">Books Liked</a>
           </li>
         {% else %}
         <li class="nav-item">
@@ -45,16 +45,17 @@
         </li>
         {% endif %}
       </ul>
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline my-2 my-sm-0" type="submit">Search</button>
+      <form class="form-inline my-2 my-lg-0" action="{% url 'books_list' %}" method="POST">
+        {% csrf_token %}
+          <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search" value="{{ q }}">
+          <button class="btn btn-outline my-2 my-sm-0" type="submit">Search</button>
       </form>
       <ul class="navbar-nav">
       {% if user.is_authenticated %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {% if user.image_medium %}
-              <img src="{{ user.image_medium.url }}" class="navbar-user-image">
+            {% if user.image_thumbnail %}
+              <img src="{{ user.image_thumbnail.url }}" class="navbar-user-image">
             {% else %}
               <i class="fas fa-user"></i>
             {% endif %}

@@ -4,20 +4,27 @@
 {% block title %}Books Liked{% endblock %}
 
 {% block content %}
-    {% for data in page_obj.object_list %}
-        {% with data.book.google_id|load_book as book_info %}
-            <a href="{% url 'books_detail' data.book.google_id %}">
-                <div class="colxs-12 col-sm-6 col-md-4">
-                    <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
-                    <p><b>{{ book_info.volumeInfo.title }}</b></p>
-                </div>
-            </a>
-        {% endwith %}
-    {% endfor %}
-
-    <div class="row">
-        <div class="col-xs-12 mx-auto">
-            {% include "common/pagination.html" %}
+    <h2>Book Liked</h2>
+    <hr />
+    {% if page_obj.object_list.count %}
+        <div class="row">
+            {% for data in page_obj.object_list %}
+                {% with data.book.google_id|load_book as book_info %}
+                    <div class="col-xs-12 col-sm-4 text-center mb-4">
+                        <a href="{% url 'books_detail' data.book.google_id %}">
+                            <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
+                            <p class="mt-2"><b>{{ book_info.volumeInfo.title }}</b></p>
+                        </a>
+                    </div>
+                {% endwith %}
+            {% endfor %}
         </div>
-    </div>
+        <div class="row">
+            <div class="col-xs-12 mx-auto">
+                {% include "common/pagination.html" %}
+            </div>
+        </div>
+    {% else %}
+        <h5>You don't have any liked book.</h5>
+    {% endif %}
 {% endblock %}

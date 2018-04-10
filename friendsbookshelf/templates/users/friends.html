@@ -4,15 +4,29 @@
 
 {% block content %}
     <h2>Friends</h2>
+    <hr />
 
-    <div class="row">
-        {% for data in friends %}
-            <a href="{% url 'user_details' data.friend.id %}">
-                <div class="colxs-12 col-sm-6 col-md-4">
-                    <p><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
+    {% if page_obj.object_list.count %}
+        <div class="row">
+            {% for data in page_obj.object_list %}
+                <div class="col-xs-12 col-sm-4 text-center mb-4">
+                    <a href="{% url 'user_details' data.friend.id %}">
+                        {% if data.friend.image_thumbnail %}
+                            <img src="{{ data.friend.image_thumbnail.url }}"/>
+                        {% else %}
+                            <i class="far fa-user"></i>
+                        {% endif %}
+                        <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
+                    </a>
                 </div>
-            </a>
-        {% endfor %}
-    </div>
-
+            {% endfor %}
+        </div>
+        <div class="row">
+            <div class="col-xs-12 mx-auto">
+                {% include "common/pagination.html" %}
+            </div>
+        </div>
+    {% else %}
+        <h5>You don't have any book in your wishlist.</h5>
+    {% endif %}
 {% endblock %}

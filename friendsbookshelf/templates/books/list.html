@@ -4,17 +4,18 @@
 
 {% block content %}
     <h2>Books</h2>
+    <hr />
 
-    Total books: {{ books.totalItems }}
+    <p>Total books: {{ books.totalItems }}</p>
     
     <div class="row">
         {% for book in books.items %}
-            <a href="{% url 'books_detail' book.id %}">
-                <div class="colxs-12 col-sm-6 col-md-4">
+            <div class="colxs-12 col-sm-6 col-md-4 mb-4">
+                <a href="{% url 'books_detail' book.id %}">
                     <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
-                    <p><b>{{ book.volumeInfo.title }}</b></p>
-                </div>
-            </a>
+                    <p class="mt-2" ><b>{{ book.volumeInfo.title }}</b></p>
+                </a>
+            </div>
         {% endfor %}
     </div>
 

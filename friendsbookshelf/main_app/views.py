@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
-from main_app.models import Post
+from main_app.models import Post, Comment
 from users.models import FriendList
 from users.forms import UserLoginForm
 from users.forms import UserRegisterForm
@@ -33,8 +35,11 @@ def home_page(request):
         return render(request, 'home.html')
 
 
+@csrf_exempt
 def post_comment(request):
     if request.is_ajax():
-        message = "Yes, AJAX!"
-    else:
-        message = "Not Ajax"
+        text = request.POST.get('text')
+        comment = Comment.objects.create(text=text, user=request.user)
+        post = Post.objects.get(id=request.POST.get('post_id'))
+        post.comments.add(comment)
+        return JsonResponse({'text': text})
