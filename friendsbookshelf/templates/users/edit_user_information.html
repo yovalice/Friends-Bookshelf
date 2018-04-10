@@ -8,8 +8,7 @@
     <h2 class="text-center text-lavendar">User Information</h2>
     <hr/>
 
-    {{ error_message }}
-    <form method="POST" action="{% url 'user_information' %}">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {% bootstrap_form form %}
 

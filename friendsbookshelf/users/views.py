@@ -8,6 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic.edit import UpdateView
+from django.urls import reverse_lazy
 
 from pure_pagination.mixins import PaginationMixin
 
@@ -120,6 +123,21 @@ def edit_user_information(request):
         form = UserInformationForm()
 
     return render(request, 'users/edit_user_information.html', {'form': form})
+
+
+class EditUserInformation(SuccessMessageMixin, UpdateView):
+    model = User
+    form_class = UserInformationForm
+    template_name = 'users/edit_user_information.html'
+    # fields = ['first_name', 'last_name', 'bio', 'genter', 'image']
+    success_message = ("The User Information was updated successfully.")
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(EditUserInformation, self).dispatch(*args, **kwargs)
+    
+    def get_success_url(self):
+        return reverse_lazy('user_information', kwargs={'pk': self.request.user.pk})
 
 
 @login_required

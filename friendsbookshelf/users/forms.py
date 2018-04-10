@@ -1,6 +1,7 @@
 from django import forms
 from string import Template
 from django.utils.safestring import mark_safe
+from .models import User
 
 class UserLoginForm(forms.Form):
     username = forms.CharField(
@@ -73,25 +74,30 @@ class PictureWidget(forms.widgets.Widget):
         return mark_safe(html.substitute(link=value))
 
 
-class UserInformationForm(forms.Form):
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-    )
-    first_name = forms.CharField(
-        required=True,
-        label='First Name',
-        max_length=32
-    )
-    last_name = forms.CharField(
-        required=True,
-        label='Last Name',
-        max_length=32
-    )
-    bio = forms.CharField(
-        required=True,
-        label='User Bio',
-        widget=forms.Textarea(attrs={'cols' : "80", 'rows': "4", })
-    )
-    gender = forms.ChoiceField(choices=GENDER_CHOICES, required=True)
-    image = forms.ImageField()
+class UserInformationForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'bio', 'gender', 'image']
+
+# class UserInformationForm(forms.Form):
+#     GENDER_CHOICES = (
+#         ('M', 'Male'),
+#         ('F', 'Female'),
+#     )
+#     first_name = forms.CharField(
+#         required=True,
+#         label='First Name',
+#         max_length=32
+#     )
+#     last_name = forms.CharField(
+#         required=True,
+#         label='Last Name',
+#         max_length=32
+#     )
+#     bio = forms.CharField(
+#         required=True,
+#         label='User Bio',
+#         widget=forms.Textarea(attrs={'cols' : "80", 'rows': "4", })
+#     )
+#     gender = forms.ChoiceField(choices=GENDER_CHOICES, required=True)
+#     image = forms.ImageField()

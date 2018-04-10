@@ -61,7 +61,7 @@
             {% endif %}
             </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'user_information' %}"><i class="fas fa-user"></i> User Info</a>
+            <a class="dropdown-item" href="{% url 'user_information' user.id %}"><i class="fas fa-user"></i> User Info</a>
             <a class="dropdown-item" href="{% url 'friends' %}"><i class="fas fa-users"></i> Friends</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
