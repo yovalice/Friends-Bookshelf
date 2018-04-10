@@ -6,6 +6,7 @@ from django.conf import settings
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
+from django.contrib import messages
 
 from pure_pagination.mixins import PaginationMixin
 
@@ -55,15 +56,16 @@ def books_detail(request, volume_id):
 def books_like_dislike_post(request, volume_id, book_name):
     liked_var = request.POST.get('liked')
     
-    book_liked = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).exists()
+    book_liked = BooksRead.objects.filter(user=request.user, book__google_id=volume_id)
 
     if liked_var == 'True':
         liked = True
     else:
         liked = False
 
-    if book_liked:
+    if book_liked.exists():
         book_liked.update(liked=liked)
+        messages.success(request, 'The book with the title ' + book_name + ' was updated.')
     else:
         book = Book.objects.filter(google_id=volume_id)
 
@@ -72,23 +74,32 @@ def books_like_dislike_post(request, volume_id, book_name):
         else:
             book_created = Book.objects.create(name=book_name, google_id=volume_id)
             BooksRead.objects.create(user=request.user, book=book_created, liked=liked)
+            
+        messages.success(request, 'The book with the title ' + book_name + ' was added to book reads list.')
 
     return redirect('books_detail', volume_id=volume_id)
 
 
 @login_required
 def books_wishlist_post(request, volume_id, book_name):    
-    book_liked = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
-    book = Book.objects.filter(google_id=volume_id)
+    book_liked = BookWish.objects.filter(user=request.user, book__google_id=volume_id)
 
-    if book_liked:
+    if book_liked.exists():
+        book_liked.delete()
+        messages.success(request, 'The book with the title ' + book_name + ' was removed from the books wishlist.')
+    else:
+        print('woot')
+        book = Book.objects.filter(google_id=volume_id)
         if book.exists():
+            print('woot2')
             BookWish.objects.create(user=request.user, book=book.first())
         else:
+            print('woot3')
             book_created = Book.objects.create(name=book_name, google_id=volume_id)
             BookWish.objects.create(user=request.user, book=book_created)
-    else:
-        book_liked.delete()
+        
+        messages.success(request, 'The book with the title ' + book_name + ' was added to the books wishlist.')
+
 
     return redirect('books_detail', volume_id=volume_id)
 

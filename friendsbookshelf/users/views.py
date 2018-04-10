@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
+from django.contrib import messages
 
 from pure_pagination.mixins import PaginationMixin
 
@@ -30,7 +31,7 @@ def register(request):
             username = userObj['username']
             email = userObj['email']
             password = userObj['password']
-            if not (User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists()):
+            if not User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists():
                 user = User.objects.create_user(username, email, password)
                 user.first_name = first_name
                 user.last_name = last_name
@@ -39,8 +40,8 @@ def register(request):
                 auth_login(request, user)
                 return HttpResponseRedirect('/')
             else:
-                data = {'form': form,
-                        'register_error_message': 'Looks like the username or email with the information provided already exists.'}
+                data = {'form': form}
+                messages.error(request, 'Looks like the username or email with the information provided already exists.')
                 return render(request, 'users/register.html', data)
     else:
         form = UserRegisterForm()
@@ -58,10 +59,12 @@ def login(request):
             if User.objects.filter(username=username).exists() or User.objects.filter(email=username).exists():
                 user = authenticate(username=username, password=password)
                 auth_login(request, user)
+                # messages.add_message(request, messages.SUCCESS, 'Looks like that username does not exists or the password is incorrect.')
                 return HttpResponseRedirect('/')
             else:
-                data = {'form': form,
-                        'login_error_message': 'Looks like that username does not exists or the password is incorrect.'}
+                data = {'form': form}
+                messages.error(request, 'Looks like that username does not exists or the password is incorrect.')
+                print('hey')
 
                 return render(request, 'users/login.html', data)
     else:

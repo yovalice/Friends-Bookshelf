@@ -9,8 +9,9 @@
     <h2 class="text-center text-lavendar">Register</h2>
     <hr/>
 
-    {{ error_message }}
     <form method="POST" action="{% url 'register' %}">
+        {% include "common/message.html" %}
+
         {% csrf_token %}
         {% bootstrap_form form %}
 

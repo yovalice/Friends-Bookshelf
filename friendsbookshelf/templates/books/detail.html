@@ -9,20 +9,33 @@
 {% block content %}
 <div class="box-form">
   <div class="row">
+    <div class="col-xs-12  mx-auto">
+      {% include "common/message.html" %}
+    </div>
+  </div>
+  <div class="row">
       <div class="text-center col-sm-3">
-          <img src="{{ book.volumeInfo.imageLinks.large }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
+          {% if book.volumeInfo.imageLinks.large %}
+            <img src="{{ book.volumeInfo.imageLinks.large }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
+          {% elif book.volumeInfo.imageLinks.medium %}
+            <img src="{{ book.volumeInfo.imageLinks.medium }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
+          {% elif book.volumeInfo.imageLinks.small %}
+            <img src="{{ book.volumeInfo.imageLinks.small }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
+          {% elif book.volumeInfo.imageLinks.thumbnail %}
+            <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
+          {% endif %}
           <div class="text-center">
             <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
               {% csrf_token %}
-              <input type="text" class="hidden d-none" value='True'>
-              <button class="btn btn-block btn-primary" >Like</button>
+              <input type="text" class="hidden d-none" value='True' name='liked'>
+              <button class="btn btn-block btn-primary">Like</button>
             </form>
           </div>
           <div class="text-center">
             <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
               {% csrf_token %}
-              <input type="text" class="hidden d-none" value='False'>
-              <button class="btn btn-block btn-primary ">Dislike</button>
+              <input type="text" class="hidden d-none" value='False' name='liked'>
+              <button class="btn btn-block btn-primary">Dislike</button>
             </form>
           </div>
           <div class="text-center">

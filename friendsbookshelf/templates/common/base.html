@@ -37,7 +37,7 @@
             <a class="nav-link" href="{% url 'books_wishlist' %}">Books Wishlist</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'books_liked' %}">Books Liked</a>
+            <a class="nav-link" href="{% url 'books_liked' %}">Books Read</a>
           </li>
         {% else %}
         <li class="nav-item">
@@ -54,7 +54,7 @@
       {% if user.is_authenticated %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {% if user.image_thumbnail %}
+            {% if user.image %}
               <img src="{{ user.image_thumbnail.url }}" class="navbar-user-image">
             {% else %}
               <i class="fas fa-user"></i>

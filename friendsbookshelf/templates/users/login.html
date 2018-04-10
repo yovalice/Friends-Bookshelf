@@ -4,15 +4,15 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-
-<div class="box-form col-sm-8 offset-sm-2 col-md-6 offset-md-3">
-  <h2 class="text-center text-lavendar">Login</h2>
-  <hr/>
-
-  {{ error_message }}
+  <div class="row">
+    <div class="box-form col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+      <h2 class="text-center text-lavendar">Login</h2>
+      <hr/>
       <form method="POST" action="{% url 'login' %}">
-          {% csrf_token %}
-          {% bootstrap_form form %}
+        {% include "common/message.html" %}
+
+        {% csrf_token %}
+        {% bootstrap_form form %}
 
         <div class="text-center">
           {% buttons %}
@@ -22,5 +22,6 @@
           <a href="{% url 'forgot' %}">Forgot Password?</a>
         </div>
       </form>
-  </div>
+    </div>
+  </div>    
 {% endblock %}

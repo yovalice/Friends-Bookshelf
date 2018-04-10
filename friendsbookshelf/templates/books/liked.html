@@ -1,10 +1,10 @@
 {% extends "common/base.html" %}
 {% load extras %}
 
-{% block title %}Books Liked{% endblock %}
+{% block title %}Books Reads{% endblock %}
 
 {% block content %}
-    <h2>Book Liked</h2>
+    <h2>Book Reads</h2>
     <hr />
     {% if page_obj.object_list.count %}
         <div class="row">
@@ -25,6 +25,6 @@
             </div>
         </div>
     {% else %}
-        <h5>You don't have any liked book.</h5>
+        <h5>You don't have any reads book.</h5>
     {% endif %}
 {% endblock %}
