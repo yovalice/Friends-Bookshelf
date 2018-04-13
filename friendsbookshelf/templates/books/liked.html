@@ -6,6 +6,8 @@
 {% block content %}
     <h2>Book Reads</h2>
     <hr />
+    <p>Filters: <a href="?liked=all">All</a>  <a href="?liked=True">Liked</a>  <a href="?liked=False">Disliked</a></p>
+
     {% if page_obj.object_list.count %}
         <div class="row">
             {% for data in page_obj.object_list %}

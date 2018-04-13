@@ -22,7 +22,7 @@
                     <a href="{% url 'user_details' post.user.pk %}">
                         <div></div>
                         {% if post.user.image %}
-                            <img src="{{ post.user.image_thumbnail.url }}"/>
+                            <img src="{{ post.user.image_thumbnail.url }}" class="rounded"/>
                         {% else %}
                             <i class="far fa-user"></i>
                         {% endif %}
@@ -85,7 +85,7 @@
                         'post_id': $(this).parents('.post').attr('id')
                     },
                     success: function(data){
-                        var append_html = "<div class='detail-comment-box'><div class='user-comment-info'><a href='/user/'{{ user.id }}>{% if user.image %}<img src='{{ user.image_thumbnail.url }}'>{% else %}<i class='fas fa-user'></i>{% endif %}<b>{{ user.first_name }} {{ user.last_name }}</b></a></div><div class='user-comment-text'>" + data.text + "</div></div>";
+                        var append_html = "<div class='detail-comment-box'><div class='user-comment-info'><a href='/user/'{{ user.id }}>{% if user.image %}<img src='{{ user.image_thumbnail.url }}' class='rounded'>{% else %}<i class='fas fa-user'></i>{% endif %}<b>{{ user.first_name }} {{ user.last_name }}</b></a></div><div class='user-comment-text'>" + data.text + "</div></div>";
                         $('.comments-box').append(append_html);
                         $(this).prev().val('');
                         $(this).prop('disabled', false);

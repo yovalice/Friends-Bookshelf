@@ -27,8 +27,8 @@ def books_list(request):
     except PageNotAnInteger:
         start_index = '0'
 
-    q = request.POST.get('q')
-    params = '?maxResults=' + str(max_results) + '&startIndex=' + str(start_index) + '&q=' + q
+    q = request.GET.get('q')
+    params = '?maxResults=' + str(max_results) + '&startIndex=' + str(start_index) + '&q=' + q + '&fields=?fields=items/volumeInfo/title,items/volumeInfo/imageLinks'
 
     books = requests.get(settings.GOOGLE_BOOKS_API + params).json
 
@@ -43,8 +43,8 @@ def books_list(request):
 def books_detail(request, volume_id):
     book = requests.get(settings.GOOGLE_BOOKS_API + volume_id).json()
 
-    read = BooksRead.objects.filter(book__google_id=book['id'])
-    wishlist = BookWish.objects.filter(book__google_id=book['id']).exists()
+    read = BooksRead.objects.filter(user=request.user, book__google_id=book['id']).first()
+    wishlist = BookWish.objects.filter(user=request.user, book__google_id=book['id']).exists()
 
     return render(request, 'books/detail.html',
                   {'book': book,
@@ -106,7 +106,7 @@ def books_wishlist_post(request, volume_id, book_name):
 
 class BooksWishlist(PaginationMixin, ListView):
     template_name = 'books/wishlist.html'
-    paginate_by = 9
+    paginate_by = 6
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -118,11 +118,20 @@ class BooksWishlist(PaginationMixin, ListView):
 
 class BooksLiked(PaginationMixin, ListView):
     template_name = 'books/liked.html'
-    paginate_by = 9
+    paginate_by = 6
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        return BooksRead.objects.select_related('book').filter(user=self.request.user)
+        liked = self.request.GET.get('liked')
+
+        if liked=='True':
+            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user, liked=True)
+        elif liked=='False':
+            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user, liked=False)
+        else:
+            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user)
+
+        return books_read
