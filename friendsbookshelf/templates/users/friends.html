@@ -1,4 +1,9 @@
 {% extends "common/base.html" %}
+{% load staticfiles %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/friends.css' %}">
+{% endblock extra_css %}
 
 {% block title %}Friends{% endblock %}
 
@@ -7,9 +12,32 @@
     <hr />
 
     {% if page_obj.object_list.count %}
+    <div class="container">
         <div class="row">
             {% for data in page_obj.object_list %}
-                <div class="col-xs-12 col-sm-4 text-center mb-4">
+            <div class="col-sm-3">
+                <div class="card">
+                    <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
+
+                    {% if data.friend.image %}
+                        <img class="src-image" src="{{ data.friend.image_thumbnail.url }}"/>
+                    {% else %}
+                        <img class="src-image" src="{% static 'img/user_icon.png' %}"/>
+                    {% endif %}
+
+                    <div class="avatar">
+                      {% if data.friend.image %}
+                        <img src="{{ data.friend.image_thumbnail.url }}"/>
+                      {% else %}
+                        <img src="{% static 'img/user_icon.png' %}"/>
+                      {% endif %}
+                    </div>
+                    <div class="content">
+                           <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
+                    </div>
+                </div>
+            </div>
+                <!-- <div class="col-xs-12 col-sm-4 text-center mb-4">
                     <a href="{% url 'user_details' data.friend.id %}">
                         {% if data.friend.image_thumbnail %}
                             <img src="{{ data.friend.image_thumbnail.url }}"/>
@@ -18,15 +46,20 @@
                         {% endif %}
                         <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
                     </a>
-                </div>
+                </div> -->
             {% endfor %}
         </div>
+    </div>
         <div class="row">
             <div class="col-xs-12 mx-auto">
                 {% include "common/pagination.html" %}
             </div>
         </div>
     {% else %}
-        <h5>You don't have any book in your wishlist.</h5>
+        <h5>You still don't have any friend.</h5>
     {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <script type="application/javascript" src="{% static 'js/friends.js' %}"></script>
 {% endblock %}
