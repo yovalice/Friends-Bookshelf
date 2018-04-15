@@ -20,7 +20,6 @@
             <div class="box-form post" id='{{ post.id }}'>
                 <div class="post information">
                     <a href="{% url 'user_details' post.user.pk %}">
-                        <div></div>
                         {% if post.user.image %}
                             <img src="{{ post.user.image_thumbnail.url }}" class="rounded"/>
                         {% else %}

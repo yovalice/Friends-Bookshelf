@@ -1,34 +1,87 @@
 {% extends "common/base.html" %}
+{% load extras %}
+{% load staticfiles %}
 
-{% block title %}User Information{% endblock %}
+{% block title %}User Detail | {{ user_detail.first_name }} {{ user_detail.last_name }}{% endblock %}
 
 {% block content %}
-<i class="fas fa-user"></i>
-  <i class="far fa-user"></i>
-  <!--brand icon-->
-  <i class="fab fa-github-square"></i>
     <div class="row">
-        <div class="col-sm-2 text-center">
-            {{ user.image.large }}
+        <div class="col-sm-3 text-center">
+            {% if user_detail.image %}
+                <img src="{{ user_detail.image_medium.url }}" class="img-fluid img-thumbnail"/>
+            {% else %}
+                <img src="{% static 'img/user_icon.png' %}" class="img-fluid img-thumbnail"/>
+            {% endif %}
+
+            {% if user_detail != user %}
+                <div class="text-center">
+                    <form action="{% url 'users_friends_post' user_detail.id %}" method="POST">
+                        {% csrf_token %}
+                        {% if friend_accepted %}
+                            <button class="btn btn-block btn-danger">Delete Friend</button>
+                        {% elif friend_request %}
+                            <button class="btn btn-block btn-danger">Cancel Friend Request</button>
+                        {% else %}
+                            <button class="btn btn-block btn-primary">Send Friend Request</button>
+                        {% endif %}
+                    </form>
+                </div>
+            {% endif %}
         </div>
-        <div class="col-sm-10">
-            <h2>User Iformation</h2>
-            {{ user.first_name }}
-            {{ user.last_name }}
-            {{ user.bio }}
-            {{ user.gender }}
-        </div>
-        <div class="col-sm-10">
-            <h2>Latest Books Reads</h2>
-            {% for book in books_read %}
-                {{ book }}
-            {% endfor %}
-        </div>
-        <div class="col-sm-10">
-            <h2>Latest Posts</h2>
-                {% for post in posts %}
-                    {{post}}
-                {% endfor %}
+        <div class="col-sm-9">
+                <div class="row">
+                    <div class="col-xs-12 mx-auto">
+                        {% include "common/message.html" %}
+                    </div>
+                </div>
+            <div class="mb-5">
+                <h2>User Iformation</h2>
+                <hr/>
+                <p><b>First Name:</b> {{ user_detail.first_name }}</p>
+                <p><b>Last Name:</b> {{ user_detail.last_name }}</p>
+                <p><b>Bio:</b> {% if user_detail.bio %}{{ user_detail.bio }}{% else %}No bio.{% endif %}</p>
+                {% if user_detail.gender %}<p><b>Gender:</b>{% if user_detail.gender == "F" %} Female {% elif user_detail.gender == "M"%} Male{% endif %}</p>{% endif %}
             </div>
+            <div class="mb-5">
+                <h2>Latest Books Reads</h2>
+                <hr/>
+                {% if books_read.count %}
+                    <div class="row">
+                        {% for data in books_read %}
+                            {#{% with data.book.google_id|load_book as book_info %}#}
+                                <div class="col-xs-12 col-sm-4 text-center mb-4">
+                                    <a href="{% url 'books_detail' data.book.google_id %}">
+                                        <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
+                                        <p class="mt-2"><b>{{ book_info.volumeInfo.title }}</b></p>
+                                    </a>
+                                </div>
+                            {#{% endwith %}#}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <h5>This user dosen't have any Book Read.</h5>
+                {% endif %}
+            </div>
+            <div class="mb-5">
+                <h2>Latest Posts</h2>
+                <hr />
+
+                {% for post in posts %}
+                    <div class="box-form post" id='{{ post.id }}'>
+                        <div class="post information">
+                            {% if post.user.image %}
+                                <img src="{{ post.user.image_thumbnail.url }}" class="rounded"/>
+                            {% else %}
+                                <i class="far fa-user"></i>
+                            {% endif %}
+                            <b> {{ post.user.first_name }} {{ post.user.last_name }}</b>
+                            <div class="post-box">
+                                {{ post.description }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div> 
+        </div>  
     </div>
 {% endblock %}

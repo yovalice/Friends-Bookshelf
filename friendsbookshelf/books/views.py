@@ -99,8 +99,6 @@ def books_wishlist_post(request, volume_id, book_name):
             BookWish.objects.create(user=request.user, book=book_created)
         
         messages.success(request, 'The book with the title ' + book_name + ' was added to the books wishlist.')
-
-
     return redirect('books_detail', volume_id=volume_id)
 
 

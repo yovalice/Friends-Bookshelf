@@ -1,0 +1,32 @@
+{% extends "common/base.html" %}
+{% load extras %}
+
+{% block title %}Recommended Books{% endblock %}
+
+{% block content %}
+    <h2>Recommended Books</h2>
+    <hr />
+    <p>Filters: <a href="?liked=all">All</a>  <a href="?liked=True">Liked</a>  <a href="?liked=False">Disliked</a></p>
+
+    {% if page_obj.object_list.count %}
+        <div class="row">
+            {% for data in page_obj.object_list %}
+                {% with data.book.google_id|load_book as book_info %}
+                    <div class="col-xs-12 col-sm-4 text-center mb-4">
+                        <a href="{% url 'books_detail' data.book.google_id %}">
+                            <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
+                            <p class="mt-2"><b>{{ book_info.volumeInfo.title }}</b></p>
+                        </a>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+        <div class="row">
+            <div class="col-xs-12 mx-auto">
+                {% include "common/pagination.html" %}
+            </div>
+        </div>
+    {% else %}
+        <h5>You don't have any recommended books.</h5>
+    {% endif %}
+{% endblock %}

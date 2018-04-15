@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect
 from django import forms
+from django.shortcuts import redirect
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
@@ -144,14 +145,43 @@ class EditUserInformation(SuccessMessageMixin, UpdateView):
 def user_details(request, id):
     user = User.objects.get(id=id)
 
-    posts = Post.objects.filter(user=user)[:8]
+    friend = FriendList.objects.filter(friend=id, user=request.user)
 
-    books_read = BooksRead.objects.filter(user=user)[:10]
+    posts = Post.objects.select_related('book').prefetch_related(
+        'comments').filter(user=user)[:6]
 
-    data = {'user': user, 'books_read': books_read,
-            'posts': posts}
+    books_read = BooksRead.objects.filter(user=user)[:6]
+
+    data = {'user_detail': user, 'books_read': books_read,
+            'posts': posts, 'friend_accepted': friend.filter(accept=True).exists(),
+            'friend_request': friend.filter(accept=False).exists()}
 
     return render(request, 'users/user_details.html', data)
+
+
+@login_required
+def users_friends_post(request, user_id):
+    user_friend = FriendList.objects.select_related(
+        'friend', 'user').filter(user=request.user, friend__id=user_id)
+
+    print('woot')
+
+    if user_friend.exists():
+        if user_friend.filter(accept=True).exists():
+            user_friend = user_friend.first()
+            messages.success(request, ('%s %s was deleted from your friend list.') % (user_friend.friend.first_name, user_friend.friend.last_name))
+        else:
+            user_friend = user_friend.first()
+            messages.success(request, ('%s %s friend request was cancelled.') % (user_friend.friend.first_name, user_friend.friend.last_name))         
+        
+        user_friend.delete()
+        print('delete')
+    else:
+        print('added')
+        user_friend = FriendList.objects.create(user=request.user, friend_id=user_id)
+        messages.success(request, ('A friend request to %s %s was sent successfully.') % (user_friend.friend.first_name, user_friend.friend.last_name))
+
+    return redirect('user_details', id=user_id)
 
 
 class Friends(PaginationMixin, ListView):
