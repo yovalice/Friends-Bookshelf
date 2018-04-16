@@ -6,9 +6,10 @@ from .models import User
 
 class FriendListAdmin(admin.ModelAdmin):
     search_fields = ['id', 'user', 'friend', 'created_date']
-    list_display = ('id', 'user', 'friend', 'accept', 'decline', 'created_date')
+    list_display = ('id', 'user', 'friend', 'accept', 'created_date')
     list_display_links = ('id', 'user', 'friend')
-    list_filter = ('accept', 'decline')
+    list_filter = ('accept',)
+    raw_id_fields = ('user', 'friend')
 
 
 class BookRecommendedByFriendAdmin(admin.ModelAdmin):

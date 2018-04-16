@@ -145,6 +145,16 @@ class EditUserInformation(SuccessMessageMixin, UpdateView):
 def user_details(request, id):
     user = User.objects.get(id=id)
 
+    friend_request_from_user = FriendList.objects.filter(
+        user_id=id, friend=request.user)
+
+    if friend_request_from_user.filter(accept=True).exists():
+        friend_request_from_user_accept = 'friend_request_from_user'
+    elif friend_request_from_user.exists():
+        friend_request_from_user_accept = 'friend_request_not_accepted_from_user'
+    else:
+        friend_request_from_user_accept = None
+
     friend = FriendList.objects.filter(friend=id, user=request.user)
 
     posts = Post.objects.select_related('book').prefetch_related(
@@ -154,32 +164,48 @@ def user_details(request, id):
 
     data = {'user_detail': user, 'books_read': books_read,
             'posts': posts, 'friend_accepted': friend.filter(accept=True).exists(),
-            'friend_request': friend.filter(accept=False).exists()}
+            'friend_request': friend.filter(accept=False).exists(),
+            'friend_request_from_user_accept': friend_request_from_user_accept}
 
     return render(request, 'users/user_details.html', data)
 
 
 @login_required
 def users_friends_post(request, user_id):
-    user_friend = FriendList.objects.select_related(
-        'friend', 'user').filter(user=request.user, friend__id=user_id)
+    friend_request_from_user = FriendList.objects.select_related(
+        'friend', 'user').filter(friend=request.user, user_id=user_id)
 
-    print('woot')
+    if not friend_request_from_user.exists():
+        user_friend = FriendList.objects.select_related(
+            'friend', 'user').filter(user=request.user, friend__id=user_id)
 
-    if user_friend.exists():
-        if user_friend.filter(accept=True).exists():
-            user_friend = user_friend.first()
-            messages.success(request, ('%s %s was deleted from your friend list.') % (user_friend.friend.first_name, user_friend.friend.last_name))
+        if user_friend.exists():
+            if user_friend.filter(accept=True).exists():
+                user_friend = user_friend.first()
+                messages.success(request, ('%s %s was deleted from your friend list.') % (user_friend.friend.first_name, user_friend.friend.last_name))
+            else:
+                user_friend = user_friend.first()
+                messages.success(request, ('%s %s friend request was cancelled.') % (user_friend.friend.first_name, user_friend.friend.last_name))         
+            
+            user_friend.delete()
         else:
-            user_friend = user_friend.first()
-            messages.success(request, ('%s %s friend request was cancelled.') % (user_friend.friend.first_name, user_friend.friend.last_name))         
-        
-        user_friend.delete()
-        print('delete')
+            user_friend = FriendList.objects.create(user=request.user, friend_id=user_id)
+            messages.success(request, ('A friend request to %s %s was sent successfully.') % (user_friend.friend.first_name, user_friend.friend.last_name))
     else:
-        print('added')
-        user_friend = FriendList.objects.create(user=request.user, friend_id=user_id)
-        messages.success(request, ('A friend request to %s %s was sent successfully.') % (user_friend.friend.first_name, user_friend.friend.last_name))
+        if friend_request_from_user.filter(accept=False).exists():
+            decline_or_accept = request.POST.get('accept_decline_friend_request')
+            if decline_or_accept == 'accept':
+                friend_request_from_user.update(accept=True)
+                friend_request_from_user = friend_request_from_user.first()
+                messages.success(request, ('The friend request from %s %s was accepted.') % (friend_request_from_user.user.first_name, friend_request_from_user.user.last_name))
+            elif decline_or_accept == 'decline':
+                friend_request_from_user = friend_request_from_user.first()
+                messages.success(request, ('The friend request from %s %s was declined.') % (friend_request_from_user.user.first_name, friend_request_from_user.user.last_name))
+                friend_request_from_user.delete()
+        else:
+            friend_request_from_user = friend_request_from_user.first()
+            messages.success(request, ('%s %s was deleted from your friend list.') % (friend_request_from_user.user.first_name, friend_request_from_user.user.last_name))
+            friend_request_from_user.delete()
 
     return redirect('user_details', id=user_id)
 

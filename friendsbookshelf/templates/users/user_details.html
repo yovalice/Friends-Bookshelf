@@ -15,16 +15,37 @@
 
             {% if user_detail != user %}
                 <div class="text-center">
-                    <form action="{% url 'users_friends_post' user_detail.id %}" method="POST">
-                        {% csrf_token %}
-                        {% if friend_accepted %}
-                            <button class="btn btn-block btn-danger">Delete Friend</button>
-                        {% elif friend_request %}
-                            <button class="btn btn-block btn-danger">Cancel Friend Request</button>
+                    {% if friend_request_from_user_accept %}
+                        {% if friend_request_from_user_accept == 'friend_request_not_accepted_from_user' %}
+                            <form action="{% url 'users_friends_post' user_detail.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" class="hidden d-none" value='accept' name='accept_decline_friend_request'>
+                                <button class="btn btn-block btn-primary">Accept Friend Request</button>
+                            </form>
+                            <form action="{% url 'users_friends_post' user_detail.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" class="hidden d-none" value='decline' name='accept_decline_friend_request'>
+                                <button class="btn btn-block btn-danger">Decline Request</button>
+                            </form>
                         {% else %}
-                            <button class="btn btn-block btn-primary">Send Friend Request</button>
+                            <form action="{% url 'users_friends_post' user_detail.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" class="hidden d-none" value='True' name='liked'>
+                                <button class="btn btn-block btn-danger">Delete Friend</button>
+                            </form>
                         {% endif %}
-                    </form>
+                    {% else %}
+                        <form action="{% url 'users_friends_post' user_detail.id %}" method="POST">
+                            {% csrf_token %}                            
+                            {% if friend_accepted %}
+                                <button class="btn btn-block btn-danger">Delete Friend</button>
+                            {% elif friend_request %}
+                                <button class="btn btn-block btn-danger">Cancel Friend Request</button>
+                            {% else %}
+                                <button class="btn btn-block btn-primary">Send Friend Request</button>
+                            {% endif %}
+                        </form> 
+                    {% endif %}
                 </div>
             {% endif %}
         </div>

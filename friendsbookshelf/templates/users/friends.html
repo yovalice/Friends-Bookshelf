@@ -16,7 +16,7 @@
         <div class="row">
             {% for data in page_obj.object_list %}
             <div class="col-sm-3 mb-4">
-                <a href="{% url 'user_details' data.user.id %}">
+                <a href="{% url 'user_details' data.friend.id %}">
                     <div class="card">
                         <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
 

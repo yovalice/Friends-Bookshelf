@@ -39,7 +39,6 @@ class FriendList(models.Model):
     user = models.ForeignKey('users.User', related_name='FriendList_user', on_delete=models.CASCADE)
     friend = models.ForeignKey('users.User', related_name='FriendList_friends', on_delete=models.CASCADE)
     accept = models.BooleanField(default=False)
-    decline = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
