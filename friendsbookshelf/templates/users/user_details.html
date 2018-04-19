@@ -87,21 +87,25 @@
                 <h2>Latest Posts</h2>
                 <hr />
 
-                {% for post in posts %}
-                    <div class="box-form post" id='{{ post.id }}'>
-                        <div class="post information">
-                            {% if post.user.image %}
-                                <img src="{{ post.user.image_thumbnail.url }}" class="rounded"/>
-                            {% else %}
-                                <i class="far fa-user"></i>
-                            {% endif %}
-                            <b> {{ post.user.first_name }} {{ post.user.last_name }}</b>
-                            <div class="post-box">
-                                {{ post.description }}
+                {% if posts.count %}
+                    {% for post in posts %}
+                        <div class="box-form post" id='{{ post.id }}'>
+                            <div class="post information">
+                                {% if post.user.image %}
+                                    <img src="{{ post.user.image_thumbnail.url }}" class="rounded"/>
+                                {% else %}
+                                    <i class="far fa-user"></i>
+                                {% endif %}
+                                <b> {{ post.user.first_name }} {{ post.user.last_name }}</b>
+                                <div class="post-box">
+                                    {{ post.description }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <h5>This user dosen't have any Post.</h5>
+                {% endif %}
             </div> 
         </div>  
     </div>

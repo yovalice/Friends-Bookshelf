@@ -15,12 +15,16 @@ class BooksReadsAdmin(admin.ModelAdmin):
     list_display = ('id', 'book', 'user', 'liked')
     list_display_links = ('id', 'book')
     list_filter = ('liked',)
+    list_select_related = ('book', 'user')
+    raw_id_fields = ('user', 'book')
 
 
 class BookWishAdmin(admin.ModelAdmin):
     search_fields = ['id', 'book__name', 'book__google_id', 'user__username']
     list_display = ('id', 'book', 'user')
     list_display_links = ('id', 'book')
+    list_select_related = ('book', 'user')
+    raw_id_fields = ('user', 'book')
 
 
 admin.site.register(Book, BookAdmin)

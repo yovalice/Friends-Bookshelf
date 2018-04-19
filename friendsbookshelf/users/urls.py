@@ -2,7 +2,9 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
-from .views import (register, login, forgot, confirm_password, EditUserInformation, user_details, Friends, users_friends_post)
+from .views import (register, login, forgot, confirm_password,
+                    EditUserInformation, user_details, Friends,
+                    users_friends_post, UserSearch)
 
 urlpatterns = [
     path('register/', register, name='register'),
@@ -14,4 +16,5 @@ urlpatterns = [
     path('user/<int:id>/', user_details, name='user_details'),
     path('user/add_remove/<int:user_id>/', users_friends_post, name='users_friends_post'),
     path('user/friends/', Friends.as_view(), name='friends'),
+    path('user/user_search/', UserSearch.as_view(), name='user_search'),
 ]

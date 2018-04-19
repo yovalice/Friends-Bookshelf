@@ -10,12 +10,15 @@ class FriendListAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'user', 'friend')
     list_filter = ('accept',)
     raw_id_fields = ('user', 'friend')
+    list_select_related = ('user', 'friend')
 
 
 class BookRecommendedByFriendAdmin(admin.ModelAdmin):
     search_fields = ['id', 'friend']
     list_display = ('id', 'friend', 'book')
     list_display_links = ('id', 'friend', 'book')
+    list_select_related = ('book', 'friend')
+    raw_id_fields = ('book', 'friend')
 
 
 class UserAdmin(admin.ModelAdmin):

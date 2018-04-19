@@ -5,36 +5,45 @@
   <link rel="stylesheet" href="{% static 'css/friends.css' %}">
 {% endblock extra_css %}
 
-{% block title %}Friends{% endblock %}
+{% block title %}User Search{% endblock %}
 
 {% block content %}
-    <h2>Friends</h2>
+    <h2>User Search</h2>
     <hr />
-    <p>Filters: <a href="?accept=all">All</a>  <a href="?accept=True">Accepted</a>  <a href="?accept=False">Not Accepted</a></p>
+    <div class="row mb-5">
+        <div class="col-12">
+            <form method="GET" action="{% url 'user_search' %}" class="form-inline my-2 my-lg-0">
+                {% csrf_token %}
+                <!-- <label for="search-user">Search for users</label> -->
+                <input id="search-user" class="form-control mr-sm-2" type="text" name="q" placeholder="Search For User">
+                <button class="btn btn-success my-2 my-sm-0" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
 
     {% if page_obj.object_list.count %}
         <div class="row">
             {% for data in page_obj.object_list %}
                 <div class="col-sm-3 mb-5">
-                    <a href="{% url 'user_details' data.friend.id %}">
+                    <a href="{% url 'user_details' data.id %}">
                         <div class="card">
                             <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
 
-                            {% if data.friend.image %}
-                                <img class="src-image" src="{{ data.friend.image_thumbnail.url }}"/>
+                            {% if data.image %}
+                                <img class="src-image" src="{{ data.image_thumbnail.url }}"/>
                             {% else %}
                                 <img class="src-image" src="{% static 'img/user_icon.png' %}"/>
                             {% endif %}
 
                             <div class="avatar">
-                                {% if data.friend.image %}
-                                    <img src="{{ data.friend.image_thumbnail.url }}"/>
+                                {% if data.image %}
+                                    <img src="{{ data.image_thumbnail.url }}"/>
                                 {% else %}
                                     <img src="{% static 'img/user_icon.png' %}"/>
                                 {% endif %}
                             </div>
                             <div class="content">
-                                <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
+                                <p class="mt-2"><b>{{ data.first_name }} {{ data.last_name }}</b></p>
                             </div>
                         </div>
                     </a>
@@ -47,7 +56,7 @@
             </div>
         </div>
     {% else %}
-        <h5>You still don't have any friend.</h5>
+        <h5>We didn't found any user.</h5>
     {% endif %}
 {% endblock %}
 

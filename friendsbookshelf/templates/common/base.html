@@ -47,7 +47,7 @@
       </ul>
       <form class="form-inline my-2 my-lg-0" action="{% url 'books_list' %}" method="GET">
         {% csrf_token %}
-          <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search" value="{{ q }}">
+          <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search Books" aria-label="Search" value="{{ q }}">
           <button class="btn btn-outline my-2 my-sm-0" type="submit">Search</button>
       </form>
       <ul class="navbar-nav">
@@ -63,6 +63,7 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{% url 'user_information' user.id %}"><i class="fas fa-user"></i> User Info</a>
             <a class="dropdown-item" href="{% url 'friends' %}"><i class="fas fa-users"></i> Friends</a>
+            <a class="dropdown-item" href="{% url 'user_search' %}"><i class="fas fa-users"></i> User Search</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </div>

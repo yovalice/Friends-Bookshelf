@@ -12,8 +12,10 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 from pure_pagination.mixins import PaginationMixin
+from django_filters import filters
 
 from .forms import UserLoginForm
 from .forms import UserRegisterForm
@@ -211,7 +213,7 @@ def users_friends_post(request, user_id):
 
 
 class Friends(PaginationMixin, ListView):
-    paginate_by = 12
+    paginate_by = 16
     template_name = 'users/friends.html'
 
     @method_decorator(login_required)
@@ -219,5 +221,31 @@ class Friends(PaginationMixin, ListView):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        friends = FriendList.objects.select_related('friend').filter(user=self.request.user)
+        accept = self.request.GET.get('accept')
+
+        if accept=='True':
+            friends = FriendList.objects.select_related('friend').filter(
+                Q(user=self.request.user) | Q(friend=self.request.user), accept=True)
+        elif accept=='False':
+            friends = FriendList.objects.select_related('friend').filter(
+                Q(user=self.request.user) | Q(friend=self.request.user), accept=False)
+        else:
+            friends = FriendList.objects.select_related('friend').filter(
+                Q(user=self.request.user) | Q(friend=self.request.user))
+
+        return friends
+
+
+class UserSearch(PaginationMixin, ListView):
+    paginate_by = 16
+    template_name = 'users/user_search.html'
+    # filter_backends = (filters.SearchFilter,)
+    search_fields = ('username', 'first_name', 'last_name', 'email')
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        friends = User.objects.exclude(id=self.request.user.id)
         return friends
