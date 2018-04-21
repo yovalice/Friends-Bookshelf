@@ -1,97 +1,125 @@
 {% extends "common/base.html" %}
 {% load bootstrap4 %}
+{% load staticfiles %}
+{% load humanize %}
 
 {% block title %}Newsfeed{% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/newsfeed.css'%}">
+{% endblock %}
+
 {% block content %}
-    <form method="POST" action="{% url 'home' %}">
-        {% csrf_token %}
-        {% bootstrap_form form %}
+    <input type="text" id="comment-user-image" val="{% if user.image %}{{ user.image_thumbnail.url }}{% else %}{% static 'img/user_icon.png' %}{% endif %}" hidden>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="box-form mb-4">
+                <form method="POST" action="{% url 'home' %}">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
 
-        <div class="text-center">
-            {% buttons %}
-                <button class="btn btn-primary">Submit</button>
-            {% endbuttons %}
-        </div>
-    </form>
-
-    {% if posts %}
-        {% for post in posts %}
-            <div class="box-form post" id='{{ post.id }}'>
-                <div class="post information">
-                    <a href="{% url 'user_details' post.user.pk %}">
-                        {% if post.user.image %}
-                            <img src="{{ post.user.image_thumbnail.url }}" class="rounded"/>
-                        {% else %}
-                            <i class="far fa-user"></i>
-                        {% endif %}
-                        <b> {{ post.user.first_name }} {{ post.user.last_name }}</b>
-                    </a>
-                    <div class="post-box">
-                        {{ post.description }}
+                    <div class="text-center">
+                        {% buttons %}
+                            <button class="btn btn-primary">Submit</button>
+                        {% endbuttons %}
                     </div>
-                    <hr/>
-                </div>
-                {% if post.comments.count %}
-                    <div class="comments-box">
-                        {% for comment in post.comments.all %}
-                            <div class="detail-comment-box">
-                                <div class="user-comment-info">
-                                    <a href="{% url 'user_details' comment.user.pk %}">
-                                        {% if comment.user.image %}
-                                            <img src="{{ comment.user.image_thumbnail.url }}"/>
+                </form>
+            </div>
+
+            {% if posts %}
+                {% for post in posts %}
+                    <div class="post-comment-box mb-4 ajax-post" id='{{ post.id }}'>
+                        <div class="post-information">
+                            <div class="user-post-box mb-3 mt-3 clearfix">
+                                <div class="float-left">
+                                    <a href="{% url 'user_details' post.user.pk %}">
+                                        {% if post.user.image %}
+                                            <img src="{{ post.user.image_thumbnail.url }}" class="rounded-circle newsfeed-post-img-size"/>
                                         {% else %}
-                                            <i class="far fa-user"></i>
+                                            <img src="{% static 'img/user_icon.png' %}" class="rounded-circle newsfeed-post-img-size"/>
                                         {% endif %}
-                                        <b> {{ comment.user.first_name }} {{ comment.user.last_name }}</b>
                                     </a>
                                 </div>
-                                <div class="user-comment-text">
-                                    {{ comment.text }}
+                                <div class="col-sm-10 float-left">
+                                    <p class="mb-0">
+                                        <a href="{% url 'user_details' post.user.pk %}">
+                                            <b>{{ post.user.first_name }} {{ post.user.last_name }}</b>
+                                        </a>
+                                    </p>
+                                    <p class="text-small mb-0"><small>{{ post.created_date|naturalday|capfirst }} at {{ post.created_date|date:'P' }}</small></p>
                                 </div>
                             </div>
-                        {% endfor %}
+                            <div class="post-box">
+                                {{ post.description }}
+
+                                {% if post.book %}
+                                    Libro
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr class="mb-0" />
+                        <div class="comments-box">
+                            <div class="pb-3 pt-3 comments-box-ajax">
+                                {% if post.comments.count %}
+                                    {% for comment in post.comments.all %}
+                                        <div class="detail-comment-box mb-2">
+                                            <div class="user-comment-info">
+                                                <a href="{% url 'user_details' comment.user.pk %}">
+                                                    {% if comment.user.image %}
+                                                        <img src="{{ comment.user.image_thumbnail.url }}" class="newsfeed-comment-img-size rounded-circle"/>
+                                                    {% else %}
+                                                        <img src="{% static 'img/user_icon.png' %}" class="newsfeed-comment-img-size rounded-circle"/>
+                                                    {% endif %}
+                                                    <b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b>
+                                                </a>
+                                                <span class="user-comment-text">
+                                                    {{ comment.text }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="insert-comment-box pb-3 pt-3">
+                            <form class="submit-comment">
+                                <div class="input-group">
+                                    <input type="text" class="form-control inputs-lg comment-input" placeholder="Write a comment..." aria-label="Write a comment..." aria-describedby="basic-addon2" required="required">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-success" type="submit">Post Comment</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <hr />
-                {% endif %}
+                {% endfor %}
 
-                <div class="insert-comment-box">
-                    <input type="text" class="inputs-sm">
-                    <button class="submit-comment btn btn-sm btn-success">Submit</button>
+                <button class="btn btn-primary btn-block">Load more posts.</button>
+            {% else %}
+                <div class="">
+                    <h4>We don't have any post from your friends, be the first to post something!!</h4>
                 </div>
-            </div>
-        {% endfor %}
-    {% else %}
-        <div class="">
-            <h4>We don't have any post from your friends, be the first to post something!!</h4>
+            {% endif %}
         </div>
-    {% endif %}
 
+        <div class="col-md-4">
+            <div class="box-form">
+                <h4>Friends Suggest</h4>
+
+                {% if friend_suggest %}
+                    {% for friend in friend_suggest %}
+
+                    {% endfor %}
+                {% else %}
+                    <h4>We don't have any friend suggestions right now.</h4>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript">
-        // $(".submit-comment").
-
-        $(document).ready(function() {
-            $(".submit-comment").click(function(event){
-                $(this).prop('disabled', true);
-                $.ajax({
-                    type:"POST",
-                    url:"/ajax/comment/",
-                    data: {
-                        'text': $(this).prev().val(),
-                        'post_id': $(this).parents('.post').attr('id')
-                    },
-                    success: function(data){
-                        var append_html = "<div class='detail-comment-box'><div class='user-comment-info'><a href='/user/'{{ user.id }}>{% if user.image %}<img src='{{ user.image_thumbnail.url }}' class='rounded'>{% else %}<i class='fas fa-user'></i>{% endif %}<b>{{ user.first_name }} {{ user.last_name }}</b></a></div><div class='user-comment-text'>" + data.text + "</div></div>";
-                        $('.comments-box').append(append_html);
-                        $(this).prev().val('');
-                        $(this).prop('disabled', false);
-                    }
-                });
-                return false;
-            });
-        });
-    </script>
+    <script type="text/javascript" src="{% static 'js/newsfeed.js' %}"></script>
 {% endblock %}

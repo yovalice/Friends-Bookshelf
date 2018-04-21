@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-sm-3 text-center">
+        <div class="col-sm-5 col-md-4 col-lg-3 text-center">
             {% if user_detail.image %}
                 <img src="{{ user_detail.image_medium.url }}" class="img-fluid img-thumbnail"/>
             {% else %}
@@ -48,15 +48,16 @@
                     {% endif %}
                 </div>
             {% endif %}
+            <hr class="d-block d-sm-none" />
         </div>
-        <div class="col-sm-9">
+        <div class="col-sm-7 col-md-8 col-lg-9">
                 <div class="row">
                     <div class="col-xs-12 mx-auto">
                         {% include "common/message.html" %}
                     </div>
                 </div>
             <div class="mb-5">
-                <h2>User Iformation</h2>
+                <h2 class="text-lavendar">User Iformation</h2>
                 <hr/>
                 <p><b>First Name:</b> {{ user_detail.first_name }}</p>
                 <p><b>Last Name:</b> {{ user_detail.last_name }}</p>
@@ -64,19 +65,19 @@
                 {% if user_detail.gender %}<p><b>Gender:</b>{% if user_detail.gender == "F" %} Female {% elif user_detail.gender == "M"%} Male{% endif %}</p>{% endif %}
             </div>
             <div class="mb-5">
-                <h2>Latest Books Reads</h2>
+                <h2 class="text-lavendar">Latest Books Reads</h2>
                 <hr/>
                 {% if books_read.count %}
                     <div class="row">
                         {% for data in books_read %}
-                            {#{% with data.book.google_id|load_book as book_info %}#}
+                            {% with data.book.google_id|load_book as book_info %}
                                 <div class="col-xs-12 col-sm-4 text-center mb-4">
                                     <a href="{% url 'books_detail' data.book.google_id %}">
                                         <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
                                         <p class="mt-2"><b>{{ book_info.volumeInfo.title }}</b></p>
                                     </a>
                                 </div>
-                            {#{% endwith %}#}
+                            {% endwith %}
                         {% endfor %}
                     </div>
                 {% else %}
@@ -84,7 +85,7 @@
                 {% endif %}
             </div>
             <div class="mb-5">
-                <h2>Latest Posts</h2>
+                <h2 class="text-lavendar">Latest Posts</h2>
                 <hr />
 
                 {% if posts.count %}

@@ -8,7 +8,7 @@
 {% block title %}User Search{% endblock %}
 
 {% block content %}
-    <h2>User Search</h2>
+    <h2 class="text-lavendar">User Search</h2>
     <hr />
     <div class="row mb-5">
         <div class="col-12">
@@ -24,7 +24,7 @@
     {% if page_obj.object_list.count %}
         <div class="row">
             {% for data in page_obj.object_list %}
-                <div class="col-sm-3 mb-5">
+                <div class="col-md-6 col-lg-3 mb-5">
                     <a href="{% url 'user_details' data.id %}">
                         <div class="card">
                             <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>

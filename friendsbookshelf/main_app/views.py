@@ -42,4 +42,4 @@ def post_comment(request):
         comment = Comment.objects.create(text=text, user=request.user)
         post = Post.objects.get(id=request.POST.get('post_id'))
         post.comments.add(comment)
-        return JsonResponse({'text': text})
+        return JsonResponse({'text': text, 'user_id': request.user.id, 'full_name': request.user.first_name + ' ' + request.user.last_name})

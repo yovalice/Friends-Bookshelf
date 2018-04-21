@@ -8,36 +8,66 @@
 {% block title %}Friends{% endblock %}
 
 {% block content %}
-    <h2>Friends</h2>
+    <h2 class="text-lavendar">Friends</h2>
     <hr />
-    <p>Filters: <a href="?accept=all">All</a>  <a href="?accept=True">Accepted</a>  <a href="?accept=False">Not Accepted</a></p>
+    <p>
+        <b class="mr-2">Filters:</b>
+        <a href="?accept=all" class="btn btn-sm btn-outline-success mr-2">All</a>
+        <a href="?accept=True" class="btn btn-sm btn-outline-primary mr-2">Accepted</a>
+        <a href="?accept=False" class="btn btn-sm btn-outline-danger mr-2">Not Accepted</a>
+    </p>
 
     {% if page_obj.object_list.count %}
         <div class="row">
             {% for data in page_obj.object_list %}
-                <div class="col-sm-3 mb-5">
-                    <a href="{% url 'user_details' data.friend.id %}">
-                        <div class="card">
-                            <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
+                <div class="col-md-6 col-lg-3 mb-5">
+                    {% if data.friend == user %}
+                        <a href="{% url 'user_details' data.user.id %}">
+                            <div class="card">
+                                <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
 
-                            {% if data.friend.image %}
-                                <img class="src-image" src="{{ data.friend.image_thumbnail.url }}"/>
-                            {% else %}
-                                <img class="src-image" src="{% static 'img/user_icon.png' %}"/>
-                            {% endif %}
-
-                            <div class="avatar">
-                                {% if data.friend.image %}
-                                    <img src="{{ data.friend.image_thumbnail.url }}"/>
+                                {% if data.user.image %}
+                                    <img class="src-image" src="{{ data.user.image_thumbnail.url }}"/>
                                 {% else %}
-                                    <img src="{% static 'img/user_icon.png' %}"/>
+                                    <img class="src-image" src="{% static 'img/user_icon.png' %}"/>
                                 {% endif %}
+
+                                <div class="avatar">
+                                    {% if data.user.image %}
+                                        <img src="{{ data.user.image_thumbnail.url }}"/>
+                                    {% else %}
+                                        <img src="{% static 'img/user_icon.png' %}"/>
+                                    {% endif %}
+                                </div>
+                                <div class="content">
+                                    <p class="mt-2"><b>{{ data.user.first_name }} {{ data.friend.last_name }}</b></p>
+                                </div>
                             </div>
-                            <div class="content">
-                                <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'user_details' data.friend.id %}">
+                            <div class="card">
+                                <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
+
+                                {% if data.friend.image %}
+                                    <img class="src-image" src="{{ data.friend.image_thumbnail.url }}"/>
+                                {% else %}
+                                    <img class="src-image" src="{% static 'img/user_icon.png' %}"/>
+                                {% endif %}
+
+                                <div class="avatar">
+                                    {% if data.friend.image %}
+                                        <img src="{{ data.friend.image_thumbnail.url }}"/>
+                                    {% else %}
+                                        <img src="{% static 'img/user_icon.png' %}"/>
+                                    {% endif %}
+                                </div>
+                                <div class="content">
+                                    <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

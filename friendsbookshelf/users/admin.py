@@ -14,11 +14,11 @@ class FriendListAdmin(admin.ModelAdmin):
 
 
 class BookRecommendedByFriendAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'friend']
-    list_display = ('id', 'friend', 'book')
-    list_display_links = ('id', 'friend', 'book')
-    list_select_related = ('book', 'friend')
-    raw_id_fields = ('book', 'friend')
+    search_fields = ['id', 'friend', 'user']
+    list_display = ('id', 'friend', 'user', 'book')
+    list_display_links = ('id', 'friend', 'user', 'book')
+    list_select_related = ('book', 'friend', 'user')
+    raw_id_fields = ('book', 'friend', 'user')
 
 
 class UserAdmin(admin.ModelAdmin):

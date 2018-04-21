@@ -7,7 +7,7 @@ class UserPostForm(forms.Form):
     post = forms.CharField(
         required=True,
         label='Post',
-        widget=forms.Textarea(attrs={'cols' : "80", 'rows': "3", })
+        widget=forms.Textarea(attrs={'cols' : "80", 'rows': "2", })
     )
     book_choice = forms.ModelChoiceField(
         queryset=None,

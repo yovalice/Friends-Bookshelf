@@ -160,9 +160,9 @@ def user_details(request, id):
     friend = FriendList.objects.filter(friend=id, user=request.user)
 
     posts = Post.objects.select_related('book').prefetch_related(
-        'comments').filter(user=user)[:6]
+        'comments').filter(user=user).order_by('-id')[:6]
 
-    books_read = BooksRead.objects.filter(user=user)[:6]
+    books_read = BooksRead.objects.filter(user=user).order_by('-id')[:6]
 
     data = {'user_detail': user, 'books_read': books_read,
             'posts': posts, 'friend_accepted': friend.filter(accept=True).exists(),

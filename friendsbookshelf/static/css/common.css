@@ -9,9 +9,11 @@
   border-color: #ddd;
   border-radius: 8px;
 }
+
 .container{
     margin-bottom: 100px;
 }
+
 .btn-block{
   width: 100%;
   margin: 10px 0px 10px 0px;
@@ -19,4 +21,9 @@
 
 .navbar-user-image{
   width: 45px!important;
+}
+
+.dropdown-navbar-menu-custom{
+  left: -75%;
+  box-shadow: -1px 3px 8px 1px #e0e0e0;
 }

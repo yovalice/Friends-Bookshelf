@@ -1,0 +1,32 @@
+
+.newsfeed-post-img-size{
+    width: 44px;
+}
+
+.newsfeed-comment-img-size{
+    width: 32px;
+}
+ 
+.post-comment-box{
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 5px #757575;
+}
+
+.post-information{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.comments-box, .insert-comment-box{
+    padding-left: 20px;
+    padding-right: 20px;
+    background: #f1f5fd;
+}
+
+.post-box{
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 12px;
+    box-shadow: 1px 1px 4px #717171;
+}

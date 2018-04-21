@@ -3,10 +3,8 @@
 {% block title %}Books{% endblock %}
 
 {% block content %}
-    <h2>Books</h2>
+    <h2 class="text-lavendar">Books</h2>
     <hr />
-
-    <p>Total books: {{ books.totalItems }}</p>
     
     <div class="row">
         {% for book in books.items %}

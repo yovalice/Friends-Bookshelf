@@ -34,6 +34,8 @@ class User(AbstractUser, Image):
     bio = models.TextField(max_length=500, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
 
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
 
 class FriendList(models.Model):
     user = models.ForeignKey('users.User', related_name='FriendList_user', on_delete=models.CASCADE)
@@ -46,8 +48,11 @@ class FriendList(models.Model):
 
 
 class BookRecommendedByFriend(models.Model):
-    friend = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    friend = models.ForeignKey('users.User', related_name='BookRecommendedByFriend_friend',
+                               on_delete=models.CASCADE)
+    user = models.ForeignKey('users.User', related_name='BookRecommendedByFriend_user',
+                             on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.friend.username + ' - ' + self.book
+        return ('%s - %s - %s') % (self.user.username, self.friend.username, self.book)

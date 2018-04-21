@@ -60,7 +60,7 @@
               <i class="fas fa-user"></i>
             {% endif %}
             </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div class="dropdown-menu dropdown-navbar-menu-custom mb-3" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{% url 'user_information' user.id %}"><i class="fas fa-user"></i> User Info</a>
             <a class="dropdown-item" href="{% url 'friends' %}"><i class="fas fa-users"></i> Friends</a>
             <a class="dropdown-item" href="{% url 'user_search' %}"><i class="fas fa-users"></i> User Search</a>

@@ -10,7 +10,8 @@ from django.contrib import messages
 
 from pure_pagination.mixins import PaginationMixin
 
-from books.models import Book, BooksRead, BookWish
+from .models import Book, BooksRead, BookWish
+from users.models import BookRecommendedByFriend
 
 
 def books_list(request):
@@ -132,3 +133,18 @@ class BooksLiked(PaginationMixin, ListView):
             books_read = BooksRead.objects.select_related('book').filter(user=self.request.user)
 
         return books_read
+
+
+class RecommendedBooks(PaginationMixin, ListView):
+    template_name = 'books/recommended_books.html'
+    paginate_by = 6
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        recommended_books = BookRecommendedByFriend.objects.select_related(
+            'book', 'friend').filter()
+
+        return recommended_books

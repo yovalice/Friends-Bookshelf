@@ -4,9 +4,14 @@
 {% block title %}Books Reads{% endblock %}
 
 {% block content %}
-    <h2>Book Reads</h2>
+    <h2 class="text-lavendar">Book Reads</h2>
     <hr />
-    <p>Filters: <a href="?liked=all">All</a>  <a href="?liked=True">Liked</a>  <a href="?liked=False">Disliked</a></p>
+    <p>
+        <b class="mr-2">Filters:</b>
+        <a href="?liked=all" class="btn btn-sm btn-outline-success mr-2">All</a>
+        <a href="?liked=True" class="btn btn-sm btn-outline-primary mr-2">Liked</a>
+        <a href="?liked=False" class="btn btn-sm btn-outline-danger">Disliked</a>
+    </p>
 
     {% if page_obj.object_list.count %}
         <div class="row">
@@ -27,6 +32,6 @@
             </div>
         </div>
     {% else %}
-        <h5>You don't have any reads book.</h5>
+        <h4>You don't have any reads book.</h4>
     {% endif %}
 {% endblock %}
