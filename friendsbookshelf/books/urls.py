@@ -9,7 +9,7 @@ urlpatterns = [
     path('recommended_books/', RecommendedBooks.as_view(), name='recommended_books'),
     path('', books_list, name='books_list'),
     path('<volume_id>/', books_detail, name='books_detail'),
-    re_path('books_like_dislike_post/(?P<volume_id>\w+)/(?P<book_name>\w+)/', books_like_dislike_post, name='books_like_dislike_post'),
-    re_path('books_wishlist_post/(?P<volume_id>\w+)/(?P<book_name>\w+)/', books_wishlist_post, name='books_wishlist_post'),
+    path('books_like_dislike_post/<volume_id>/<book_name>/', books_like_dislike_post, name='books_like_dislike_post'),
+    path('books_wishlist_post/<volume_id>/<book_name>/', books_wishlist_post, name='books_wishlist_post'),
 ]
 

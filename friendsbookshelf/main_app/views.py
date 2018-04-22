@@ -1,3 +1,6 @@
+import requests
+
+from django.conf import settings
 from django.shortcuts import render
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
@@ -43,7 +46,7 @@ def home_page(request):
         # except PageNotAnInteger:
         #     page = 1
 
-        posts = Post.objects.select_related('book', 'user').prefetch_related(
+        posts = Post.objects.select_related('book', 'book__book', 'user').prefetch_related(
             'comments', 'comments__user').filter(Q(user=request.user) | Q(user__in=friend_list)).order_by('-created_date')
 
         # p = Paginator(objects, request=request)
@@ -52,7 +55,14 @@ def home_page(request):
 
         return render(request, 'newsfeed.html', {'posts': posts, 'form': form})
     else:
-        return render(request, 'home.html')
+        q = 'Harry Potter'
+
+        params = '?maxResults=8&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
+
+        books = requests.get(settings.GOOGLE_BOOKS_API + params).json
+
+        return render(request, 'home.html',
+                    {'books': books})
 
 
 @csrf_exempt

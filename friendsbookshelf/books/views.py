@@ -29,7 +29,8 @@ def books_list(request):
         start_index = '0'
 
     q = request.GET.get('q')
-    params = '?maxResults=' + str(max_results) + '&startIndex=' + str(start_index) + '&q=' + q + '&fields=?fields=items/volumeInfo/title,items/volumeInfo/imageLinks'
+
+    params = '?maxResults=' + str(max_results) + '&startIndex=' + str(start_index) + '&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
 
     books = requests.get(settings.GOOGLE_BOOKS_API + params).json
 
@@ -43,8 +44,8 @@ def books_list(request):
 @login_required
 def books_detail(request, volume_id):
     book = requests.get(settings.GOOGLE_BOOKS_API + volume_id).json()
-    read = BooksRead.objects.filter(user=request.user, book__google_id=book['id']).first()
-    wishlist = BookWish.objects.filter(user=request.user, book__google_id=book['id']).exists()
+    read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
+    wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
 
     return render(request, 'books/detail.html',
                   {'book': book,
@@ -88,13 +89,10 @@ def books_wishlist_post(request, volume_id, book_name):
         book_liked.delete()
         messages.success(request, 'The book with the title ' + book_name + ' was removed from the books wishlist.')
     else:
-        print('woot')
         book = Book.objects.filter(google_id=volume_id)
         if book.exists():
-            print('woot2')
             BookWish.objects.create(user=request.user, book=book.first())
         else:
-            print('woot3')
             book_created = Book.objects.create(name=book_name, google_id=volume_id)
             BookWish.objects.create(user=request.user, book=book_created)
         

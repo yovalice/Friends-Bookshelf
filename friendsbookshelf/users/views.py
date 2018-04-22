@@ -70,7 +70,6 @@ def login(request):
             else:
                 data = {'form': form}
                 messages.error(request, 'Looks like that username does not exists or the password is incorrect.')
-                print('hey')
 
                 return render(request, 'users/login.html', data)
     else:
@@ -251,8 +250,6 @@ class UserSearch(PaginationMixin, ListView):
             user_name = self.request.GET.get('user_name')
         except:
             user_name = ''
-
-        print(user_name)
 
         if(user_name and user_name != ''):
             friends = User.objects.distinct().exclude(id=self.request.user.id).filter(
