@@ -15,7 +15,6 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 
 from pure_pagination.mixins import PaginationMixin
-from django_filters import filters
 
 from .forms import UserLoginForm
 from .forms import UserRegisterForm
