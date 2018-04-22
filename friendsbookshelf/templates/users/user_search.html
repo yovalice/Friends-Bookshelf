@@ -15,7 +15,7 @@
             <form method="GET" action="{% url 'user_search' %}" class="form-inline my-2 my-lg-0">
                 {% csrf_token %}
                 <!-- <label for="search-user">Search for users</label> -->
-                <input id="search-user" class="form-control mr-sm-2" type="text" name="q" placeholder="Search For User">
+                <input id="search-user" class="form-control mr-sm-2" type="text" name="user_name" placeholder="Search For User" value="{{request.GET.user_name}}">
                 <button class="btn btn-success my-2 my-sm-0" type="submit">Submit</button>
             </form>
         </div>
@@ -56,7 +56,11 @@
             </div>
         </div>
     {% else %}
-        <h5>We didn't found any user.</h5>
+        {% if request.GET.user_name %}
+            <h5>We didn't found any user with the keywords: {{ request.GET.user_name }}</h5>
+        {% else %}
+            <h5>We didn't found any user.</h5>
+        {% endif %}
     {% endif %}
 {% endblock %}
 

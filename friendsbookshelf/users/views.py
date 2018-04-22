@@ -247,5 +247,18 @@ class UserSearch(PaginationMixin, ListView):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        friends = User.objects.exclude(id=self.request.user.id)
+        try:
+            user_name = self.request.GET.get('user_name')
+        except:
+            user_name = ''
+
+        print(user_name)
+
+        if(user_name and user_name != ''):
+            friends = User.objects.distinct().exclude(id=self.request.user.id).filter(
+                Q(first_name__icontains=user_name) | Q(last_name__icontains=user_name) |
+                Q(email__icontains=user_name))
+        else:
+            friends = User.objects.exclude(id=self.request.user.id)
+
         return friends

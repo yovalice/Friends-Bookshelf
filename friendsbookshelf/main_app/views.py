@@ -2,6 +2,10 @@ from django.shortcuts import render
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from main_app.models import Post, Comment
 from users.models import FriendList
@@ -23,13 +27,29 @@ def home_page(request):
                     book = None
                     
                 Post.objects.create(description=post, user=request.user, book=book)
+                
+                messages.success(request, 'Your post was submitted successfully.')
+
+                return HttpResponseRedirect('/')
         else:
             form = UserPostForm(request.user)
 
         friend_list = FriendList.objects.select_related(
             'friend').filter(user=request.user, accept=True).values_list('friend', flat=True)
+
+
+        # try:
+        #     page = request.GET.get('page', 1)
+        # except PageNotAnInteger:
+        #     page = 1
+
         posts = Post.objects.select_related('book', 'user').prefetch_related(
             'comments', 'comments__user').filter(Q(user=request.user) | Q(user__in=friend_list)).order_by('-created_date')
+
+        # p = Paginator(objects, request=request)
+
+        # posts = p.page(page)
+
         return render(request, 'newsfeed.html', {'posts': posts, 'form': form})
     else:
         return render(request, 'home.html')

@@ -11,9 +11,10 @@
 
 {% block content %}
     <input type="text" id="comment-user-image" val="{% if user.image %}{{ user.image_thumbnail.url }}{% else %}{% static 'img/user_icon.png' %}{% endif %}" hidden>
+    {% include "common/message.html" %}
     <div class="row">
         <div class="col-md-8">
-            <div class="box-form mb-4">
+            <div class="newsfeed-box-form mb-4">
                 <form method="POST" action="{% url 'home' %}">
                     {% csrf_token %}
                     {% bootstrap_form form %}
@@ -53,7 +54,7 @@
                                 {{ post.description }}
 
                                 {% if post.book %}
-                                    Libro
+                                    
                                 {% endif %}
                             </div>
                         </div>
@@ -104,15 +105,16 @@
         </div>
 
         <div class="col-md-4">
-            <div class="box-form">
+            <div class="newsfeed-box-form">
                 <h4>Friends Suggest</h4>
+                <hr/>
 
                 {% if friend_suggest %}
                     {% for friend in friend_suggest %}
 
                     {% endfor %}
                 {% else %}
-                    <h4>We don't have any friend suggestions right now.</h4>
+                    <p>We don't have any friend suggestions right now.</p>
                 {% endif %}
             </div>
 

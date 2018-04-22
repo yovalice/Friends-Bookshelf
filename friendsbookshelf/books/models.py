@@ -17,7 +17,7 @@ class BookWish(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.book.name + ' - ' + self.book.google_id
+        return self.book.name
 
 
 class BooksRead(models.Model):
@@ -27,4 +27,4 @@ class BooksRead(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.book.name + ' - ' + self.book.google_id
+        return self.book.name

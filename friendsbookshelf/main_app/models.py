@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
-from books.models import Book
+from books.models import Book, BooksRead
 
 class Post(models.Model):
     description = models.TextField(blank=True, null=True)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, null=True)
+    book = models.ForeignKey(BooksRead, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     comments = models.ManyToManyField('main_app.Comment', blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
