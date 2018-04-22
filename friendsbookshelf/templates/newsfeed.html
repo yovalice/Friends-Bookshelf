@@ -52,18 +52,24 @@
                                 </div>
                             </div>
                             <div class="post-box">
-                                {{ post.description }}
+                              {{ post.description }}
 
-                                {% if post.book %}
-                                    {% with post.book.book.google_id|load_book as book_info %}
-                                        <div class="col-xs-12 col-sm-4 text-center mb-4">
-                                            <a href="{% url 'books_detail' post.book.book.google_id %}" target="_blank">
-                                                <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
-                                                <p class="mt-2"><b>{{ book_info.volumeInfo.title }}</b></p>
-                                            </a>
+                              {% if post.book %}
+                                  {% with post.book.book.google_id|load_book as book_info %}
+                                      <div class="row mt-4 suggested-books-box">
+                                        <div class="col-sm-3">
+                                          <a href="{% url 'books_detail' post.book.book.google_id %}" target="_blank">
+                                            <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}" class="img-fluid">
+                                            <p class="mt-2 text-center"><b>{{ book_info.volumeInfo.title }}</b></p>
+                                          </a>
                                         </div>
-                                    {% endwith %}
-                                {% endif %}
+                                        <div class="col-sm-9 books-box-description">
+                                          <p>{{ book_info.volumeInfo.description|safe|truncatewords:55 }} {% if book_info.volumeInfo.description|safe|length > 200 %} <a class="read-more">Read More</a>{% endif %}</p>
+                                          <p class="d-none">{{ book_info.volumeInfo.description|safe }} <a class="read-less">Read Less</a></p>
+                                        </div>
+                                      </div>
+                                  {% endwith %}
+                              {% endif %}
                             </div>
                         </div>
                         <hr class="mb-0" />

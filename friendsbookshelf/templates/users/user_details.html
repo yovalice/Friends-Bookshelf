@@ -36,7 +36,7 @@
                         {% endif %}
                     {% else %}
                         <form action="{% url 'users_friends_post' user_detail.id %}" method="POST">
-                            {% csrf_token %}                            
+                            {% csrf_token %}
                             {% if friend_accepted %}
                                 <button class="btn btn-block btn-danger">Delete Friend</button>
                             {% elif friend_request %}
@@ -44,7 +44,7 @@
                             {% else %}
                                 <button class="btn btn-block btn-primary">Send Friend Request</button>
                             {% endif %}
-                        </form> 
+                        </form>
                     {% endif %}
                 </div>
             {% endif %}
@@ -52,7 +52,7 @@
         </div>
         <div class="col-sm-7 col-md-8 col-lg-9">
             <div class="row">
-                <div class="col-xs-12 mx-auto">
+                <div class="col-xs-12 mx-auto block">
                     {% include "common/message.html" %}
                 </div>
             </div>
@@ -107,7 +107,7 @@
                 {% else %}
                     <h5>This user dosen't have any Post.</h5>
                 {% endif %}
-            </div> 
-        </div>  
+            </div>
+        </div>
     </div>
 {% endblock %}

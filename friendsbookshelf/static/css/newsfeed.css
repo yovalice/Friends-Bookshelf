@@ -5,7 +5,7 @@
 .newsfeed-comment-img-size{
     width: 32px;
 }
- 
+
 .post-comment-box{
     border-radius: 3px;
     border: 1px solid #ddd;
@@ -25,9 +25,6 @@
 
 .post-box{
     padding: 12px;
-    border: 1px solid #bbb;
-    border-radius: 30px;
-    box-shadow: 1px 1px 4px #717171;
 }
 
 .newsfeed-box-form{
@@ -37,6 +34,12 @@
     box-shadow: 1px 1px 4px #717171;
 }
 
-.newsfeed-suggested-books-box{
+.suggested-books-box{
+  border: 1px solid lightgray;
+  margin: 20px;
+  border-radius: 8px;
+}
 
+.books-box-description{
+  border-left: 1px solid lightgray;
 }

@@ -9,7 +9,7 @@
 {% block content %}
 <div class="box-form">
   <div class="row">
-    <div class="col-xs-12  mx-auto">
+    <div class="col-xs-12 mx-auto block">
       {% include "common/message.html" %}
     </div>
   </div>
@@ -24,38 +24,40 @@
           {% elif book.volumeInfo.imageLinks.thumbnail %}
             <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
           {% endif %}
-          <div class="text-center">
-            <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
-              {% csrf_token %}
-              <input type="text" class="hidden d-none" value='True' name='liked'>
-              <button class="btn btn-block btn-primary" {% if read.liked %}disabled{% endif %}>Like</button>
-            </form>
-          </div>
-          <div class="text-center">
-            <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
-              {% csrf_token %}
-              <input type="text" class="hidden d-none" value='False' name='liked'>
-              <button class="btn btn-block btn-primary" {% if not read.liked %}disabled{% endif %}>Dislike</button>
-            </form>
-          </div>
-          <div class="text-center">
-            <form action="{% url 'books_wishlist_post' book.id book.volumeInfo.title %}" method="POST">
-              {% csrf_token %}
-              {% if wishlist %}
-                <button class="btn btn-block btn-danger">Remove from wishlist</button>
-              {% else %}
-                <button class="btn btn-block btn-primary">Add to wishlist</button>
-              {% endif %}
-            </form>
-          </div>
-          <div class="text-center">
-            <button class="btn btn-block btn-primary ">Suggest to friend</button>
-          </div>
+          {% if user.is_authenticated %}
+            <div class="text-center">
+              <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
+                {% csrf_token %}
+                <input type="text" class="hidden d-none" value='True' name='liked'>
+                <button class="btn btn-block btn-primary" {% if read.liked %}disabled{% endif %}>Like</button>
+              </form>
+            </div>
+            <div class="text-center">
+              <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
+                {% csrf_token %}
+                <input type="text" class="hidden d-none" value='False' name='liked'>
+                <button class="btn btn-block btn-primary" {% if not read.liked %}disabled{% endif %}>Dislike</button>
+              </form>
+            </div>
+            <div class="text-center">
+              <form action="{% url 'books_wishlist_post' book.id book.volumeInfo.title %}" method="POST">
+                {% csrf_token %}
+                {% if wishlist %}
+                  <button class="btn btn-block btn-danger">Remove from wishlist</button>
+                {% else %}
+                  <button class="btn btn-block btn-primary">Add to wishlist</button>
+                {% endif %}
+              </form>
+            </div>
+            <div class="text-center">
+              <button class="btn btn-block btn-primary ">Suggest to friend</button>
+            </div>
+            {% endif %}
       </div>
       <div class="col-sm-8">
           <h2 class="text-lavendar">{{ book.volumeInfo.title }}</h2>
           <hr/>
-          <h3>{{ book.volumeInfo.authors }}</h3>
+          <h3>{% for author in book.volumeInfo.authors%}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</h3>
           <p><b>Language: </b>{{ book.volumeInfo.language }}</p>
           <p><b>Publish date: </b>{{ book.volumeInfo.publishedDate }}</p>
           <p><b>Available in ebook: </b>

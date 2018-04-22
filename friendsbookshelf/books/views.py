@@ -41,11 +41,14 @@ def books_list(request):
                    'page': page})
 
 
-@login_required
 def books_detail(request, volume_id):
     book = requests.get(settings.GOOGLE_BOOKS_API + volume_id).json()
-    read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
-    wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
+    if request.user.is_authenticated:
+        read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
+        wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
+    else:
+        read = None
+        wishlist = None
 
     return render(request, 'books/detail.html',
                   {'book': book,
@@ -56,7 +59,7 @@ def books_detail(request, volume_id):
 @login_required
 def books_like_dislike_post(request, volume_id, book_name):
     liked_var = request.POST.get('liked')
-    
+
     book_liked = BooksRead.objects.filter(user=request.user, book__google_id=volume_id)
 
     if liked_var == 'True':
@@ -75,14 +78,14 @@ def books_like_dislike_post(request, volume_id, book_name):
         else:
             book_created = Book.objects.create(name=book_name, google_id=volume_id)
             BooksRead.objects.create(user=request.user, book=book_created, liked=liked)
-            
+
         messages.success(request, 'The book with the title ' + book_name + ' was added to book reads list.')
 
     return redirect('books_detail', volume_id=volume_id)
 
 
 @login_required
-def books_wishlist_post(request, volume_id, book_name):    
+def books_wishlist_post(request, volume_id, book_name):
     book_liked = BookWish.objects.filter(user=request.user, book__google_id=volume_id)
 
     if book_liked.exists():
@@ -95,7 +98,7 @@ def books_wishlist_post(request, volume_id, book_name):
         else:
             book_created = Book.objects.create(name=book_name, google_id=volume_id)
             BookWish.objects.create(user=request.user, book=book_created)
-        
+
         messages.success(request, 'The book with the title ' + book_name + ' was added to the books wishlist.')
     return redirect('books_detail', volume_id=volume_id)
 
