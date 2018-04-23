@@ -31,3 +31,30 @@
 .block{
   width: 100%;
 }
+
+.suggest-friend:hover{
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 1px 1px 4px #bbb;
+  cursor: pointer;
+}
+
+.news-feed-bigger-img-size{
+  width: 125px;
+}
+
+.newsfeed-post-img-size{
+  width: 44px;
+}
+
+
+.newsfeed-comment-img-size{
+  width: 32px;
+}
+
+.recommended-friend{
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 3px #b1b1b1;
+}

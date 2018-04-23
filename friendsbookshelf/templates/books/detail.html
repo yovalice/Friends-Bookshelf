@@ -1,7 +1,9 @@
 {% extends "common/base.html" %}
 {% load staticfiles %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/books_details.css' %}">
+  <link rel="stylesheet" href="{% static 'css/books_details.css' %}">
+  <link rel="stylesheet" href="{% static 'css/sweet-alert.css' %}">
 {% endblock %}
 
 {% block title %}Books Detail | {{ book.volumeInfo.title }}{% endblock %}
@@ -9,12 +11,7 @@
 {% block content %}
 <div class="box-form">
   <div class="row">
-    <div class="col-xs-12 mx-auto block">
-      {% include "common/message.html" %}
-    </div>
-  </div>
-  <div class="row">
-      <div class="text-center col-sm-3">
+      <div class="text-center col-sm-5 col-md-4">
           {% if book.volumeInfo.imageLinks.large %}
             <img src="{{ book.volumeInfo.imageLinks.large }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
           {% elif book.volumeInfo.imageLinks.medium %}
@@ -50,11 +47,15 @@
               </form>
             </div>
             <div class="text-center">
-              <button class="btn btn-block btn-primary ">Suggest to friend</button>
+              <button class="btn btn-block btn-primary"  data-toggle="modal" data-target="#myModal" {% if friends.count <= 0 %}disabled{% endif %}>Suggest to friend</button>
             </div>
-            {% endif %}
+            {% include "books/suggest_book_modal.html" with friends=friends user=user %}
+          {% endif %}
       </div>
-      <div class="col-sm-8">
+      <div class="col-sm-7 col-md-8">
+          <div class="col-xs-12 mx-auto block">
+            {% include "common/message.html" %}
+          </div>
           <h2 class="text-lavendar">{{ book.volumeInfo.title }}</h2>
           <hr/>
           <h3>{% for author in book.volumeInfo.authors%}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</h3>
@@ -67,8 +68,39 @@
             No
             {% endif %}
           </p>
-          <p>{{ book.volumeInfo.description|safe }}</p>
+          <p class='short-text'>{{ book.volumeInfo.description|safe|truncatewords:80 }} {% if book.volumeInfo.description|safe|length > 500 %} <a class="read-more" href="">Read More</a>{% endif %}</p>
+          <p class="d-none full-text">{{ book.volumeInfo.description|safe }} <a class="read-less" href="">Read Less</a></p>
       </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static 'js/sweet-alert.min.js' %}"></script>
+    <script>
+      $('.suggest-friend').click(function(){
+        $('#myModal').modal('toggle');
+        var form = $(this).find('form');
+
+        swal({
+          title: "Are you sure?",
+          text: "You will send a book recommendation to " + $(this).find('.user-fullname').text() + ".",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-primary",
+          cancelButtonClass: "btn-danger",
+          confirmButtonText: "Recommend",
+          cancelButtonText: "Cancel",
+          closeOnConfirm: true,
+          closeOnCancel: true
+        },
+        function(isConfirm) {
+          if (isConfirm) {
+            form.submit();
+          } else {
+            $('#myModal').modal('toggle');
+          }
+        });
+      });
+    </script>
 {% endblock %}

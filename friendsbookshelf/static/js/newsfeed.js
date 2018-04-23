@@ -22,6 +22,29 @@ $(document).ready(function() {
 
     });
 
+    $('.delete-post').click(function(){
+        var form = $(this).find('form');
+
+        swal({
+          title: "Are you sure?",
+          text: "You will delete this post forever.",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-primary",
+          cancelButtonClass: "btn-danger",
+          confirmButtonText: "Delete it!",
+          cancelButtonText: "Cancel",
+          closeOnConfirm: false,
+          closeOnCancel: true
+        },
+        function(isConfirm) {
+          if (isConfirm) {
+            form.submit();
+            swal("Deleted!", "Your Post is being deleted right now.", "success");
+          }
+        });
+    });
+
     // Load more posts Ajax
     $("#load-more-posts").click(function(event){
         var inputText = $(this).parent('.input-group-append').prev();

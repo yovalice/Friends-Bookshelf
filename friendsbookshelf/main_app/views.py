@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
@@ -73,3 +74,10 @@ def post_comment(request):
         post = Post.objects.get(id=request.POST.get('post_id'))
         post.comments.add(comment)
         return JsonResponse({'text': text, 'user_id': request.user.id, 'full_name': request.user.first_name + ' ' + request.user.last_name})
+
+
+@csrf_exempt
+def delete_post(request, post_id):
+    Post.objects.get(id=post_id, user=request.user).delete()
+    messages.success(request, 'Your post was deleted successfully.')
+    return redirect('home') 

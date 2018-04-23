@@ -7,7 +7,6 @@ class UserPostForm(forms.Form):
     post = forms.CharField(
         required=True,
         label='Post',
-        help_text='safd',
         widget=forms.Textarea(attrs={'cols' : "80", 'rows': "2", 'placeholder': 'Post about yourself or books.'})
     )
     book_choice = forms.ModelChoiceField(

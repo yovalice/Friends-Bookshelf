@@ -7,6 +7,7 @@
 {% block title %}Newsfeed{% endblock %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/sweet-alert.css' %}">
     <link rel="stylesheet" href="{% static 'css/newsfeed.css'%}">
 {% endblock %}
 
@@ -28,12 +29,12 @@
                 </form>
             </div>
 
-            {% if posts %}
+            {% if posts.count %}
                 {% for post in posts %}
                     <div class="post-comment-box mb-4 ajax-post" id='{{ post.id }}'>
                         <div class="post-information">
                             <div class="user-post-box mb-3 mt-3 clearfix">
-                                <div class="float-left">
+                                <div class="float-left mr-1">
                                     <a href="{% url 'user_details' post.user.pk %}">
                                         {% if post.user.image %}
                                             <img src="{{ post.user.image_thumbnail.url }}" class="rounded-circle newsfeed-post-img-size"/>
@@ -42,7 +43,7 @@
                                         {% endif %}
                                     </a>
                                 </div>
-                                <div class="col-sm-10 float-left">
+                                <div class="float-left">
                                     <p class="mb-0">
                                         <a href="{% url 'user_details' post.user.pk %}">
                                             <b>{{ post.user.first_name }} {{ post.user.last_name }}</b>
@@ -50,6 +51,14 @@
                                     </p>
                                     <p class="text-small mb-0"><small>{{ post.created_date|naturalday|capfirst }} at {{ post.created_date|date:'P' }}</small></p>
                                 </div>
+                                {% if user == post.user %}
+                                    <div class="float-right delete-post">
+                                        <form action="{% url 'delete_post' post.id %}" method="POST">
+                                            {% csrf_token %}
+                                        </form>
+                                        <button class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="post-box">
                               {{ post.description }}
@@ -57,15 +66,15 @@
                               {% if post.book %}
                                   {% with post.book.book.google_id|load_book as book_info %}
                                       <div class="row mt-4 suggested-books-box">
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-3 pt-4">
                                           <a href="{% url 'books_detail' post.book.book.google_id %}" target="_blank">
                                             <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}" class="img-fluid">
                                             <p class="mt-2 text-center"><b>{{ book_info.volumeInfo.title }}</b></p>
                                           </a>
                                         </div>
                                         <div class="col-sm-9 books-box-description">
-                                          <p>{{ book_info.volumeInfo.description|safe|truncatewords:55 }} {% if book_info.volumeInfo.description|safe|length > 200 %} <a class="read-more">Read More</a>{% endif %}</p>
-                                          <p class="d-none">{{ book_info.volumeInfo.description|safe }} <a class="read-less">Read Less</a></p>
+                                          <p class='short-text'>{{ book_info.volumeInfo.description|safe|truncatewords:55 }} {% if book_info.volumeInfo.description|safe|length > 200 %} <a class="read-more" href="">Read More</a>{% endif %}</p>
+                                          <p class="d-none full-text">{{ book_info.volumeInfo.description|safe }} <a class="read-less" href="">Read Less</a></p>
                                         </div>
                                       </div>
                                   {% endwith %}
@@ -123,9 +132,49 @@
                 <h4>Friends Suggest</h4>
                 <hr/>
 
-                {% if friend_suggest %}
+                {% if friend_suggest.count %}
                     {% for friend in friend_suggest %}
+                        <div class="col-md-4">
+                            {% if data.friend == user %}
+                                <a>   
+                                    <div class="text-center">
+                                        {% if data.user.image %}
+                                            <img class="img-fluid rounded-circle" src="{{ data.user.image_thumbnail.url }}"/>
+                                        {% else %}
+                                            <img class="img-fluid rounded-circle" src="{% static 'img/user_icon.png' %}"/>
+                                        {% endif %}
+                                    </div>     
+                                    <div class="content">
+                                            <p class="mt-2"><b>{{ data.user.first_name }} {{ data.friend.last_name }}</b></p>
+                                        </div>
+                                </a>
+                            </div>
 
+                            {% else %}
+                                <a>
+                                    <div class="card">
+                                        <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
+        
+                                        {% if data.friend.image %}
+                                            <img class="src-image" src="{{ data.friend.image_thumbnail.url }}"/>
+                                        {% else %}
+                                            <img class="src-image" src="{% static 'img/user_icon.png' %}"/>
+                                        {% endif %}
+        
+                                        <div class="avatar">
+                                            {% if data.friend.image %}
+                                                <img src="{{ data.friend.image_thumbnail.url }}"/>
+                                            {% else %}
+                                                <img src="{% static 'img/user_icon.png' %}"/>
+                                            {% endif %}
+                                        </div>
+                                        <div class="content">
+                                            <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 {% else %}
                     <p>We don't have any friend suggestions right now.</p>
@@ -137,5 +186,6 @@
 {% endblock %}
 
 {% block extra_js %}
+    <script type="text/javascript" src="{% static 'js/sweet-alert.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/newsfeed.js' %}"></script>
 {% endblock %}

@@ -7,11 +7,13 @@ from django.views.generic import ListView
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.db.models import Q
 
 from pure_pagination.mixins import PaginationMixin
 
+from users.models import User
 from .models import Book, BooksRead, BookWish
-from users.models import BookRecommendedByFriend
+from users.models import BookRecommendedByFriend, FriendList
 
 
 def books_list(request):
@@ -46,14 +48,18 @@ def books_detail(request, volume_id):
     if request.user.is_authenticated:
         read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
         wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
+        friends = FriendList.objects.select_related('friend').filter(
+            Q(user=request.user) | Q(friend=request.user))
     else:
         read = None
         wishlist = None
+        friends = None
 
     return render(request, 'books/detail.html',
                   {'book': book,
                    'read': read,
-                   'wishlist': wishlist})
+                   'wishlist': wishlist,
+                   'friends': friends})
 
 
 @login_required
@@ -103,6 +109,27 @@ def books_wishlist_post(request, volume_id, book_name):
     return redirect('books_detail', volume_id=volume_id)
 
 
+@login_required
+def books_recommend_post(request, volume_id, book_name, user_id):
+    recommended_book = BookRecommendedByFriend.objects.select_related(
+        'book', 'friend', 'user').filter(user=user_id, friend=request.user, book__google_id=volume_id)
+    user = User.objects.get(id=user_id)
+
+    if recommended_book.exists():
+        messages.error(request, 'The book with the title ' + book_name + ' was already recommended to the user ' + user.first_name + ' ' + user.last_name + '.')
+    else:
+        book = Book.objects.filter(google_id=volume_id)
+
+        if book.exists():
+            BookRecommendedByFriend.objects.create(user=user, friend=request.user, book=book.first())
+        else:
+            book_created = Book.objects.create(name=book_name, google_id=volume_id)
+            BookRecommendedByFriend.objects.create(user=user, friend=request.user, book=book_created)
+
+        messages.success(request, 'The book with the title ' + book_name + ' was recommended to the user ' + user.first_name + ' ' + user.last_name + '.')
+    return redirect('books_detail', volume_id=volume_id)
+
+
 class BooksWishlist(PaginationMixin, ListView):
     template_name = 'books/wishlist.html'
     paginate_by = 6
@@ -146,6 +173,6 @@ class RecommendedBooks(PaginationMixin, ListView):
 
     def get_queryset(self):
         recommended_books = BookRecommendedByFriend.objects.select_related(
-            'book', 'friend').filter()
+            'book', 'friend', 'user').filter(user=self.request.user)
 
         return recommended_books

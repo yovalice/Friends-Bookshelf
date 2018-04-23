@@ -24,8 +24,8 @@
     <a class="navbar-brand" href="{% url 'home' %}">
         <img class="logo-img" src="{% static 'img/logo2.png' %}" alt="Logo">
       </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <button class="navbar-toggler nav-item" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="nav-link"><i class="fas fa-bars"></i></a>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
@@ -63,8 +63,9 @@
           <div class="dropdown-menu dropdown-navbar-menu-custom mb-3" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{% url 'user_information' user.id %}"><i class="fas fa-user"></i> User Info</a>
             <a class="dropdown-item" href="{% url 'friends' %}"><i class="fas fa-users"></i> Friends</a>
-            <a class="dropdown-item" href="{% url 'user_search' %}"><i class="fas fa-users"></i> User Search</a>
-            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'user_search' %}"><i class="far fa-user"></i> User Search</a>
+            <a class="dropdown-item" href="{% url 'recommended_books' %}"><i class="fas fa-book"></i> Recommended Books</a>
+            <div class="dropdown-divider"></div>            
             <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </div>
         </li>

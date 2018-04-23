@@ -1,0 +1,58 @@
+{% load staticfiles %}
+
+{% if friends.count %}
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Select a Friend to Recommend this Book</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row mr-2 ml-2">
+            {% for data in friends %}
+              <div class="col-sm-6 col-md-4 col-lg-3 mb-3 pt-1 pb-1 suggest-friend">
+                {% if data.friend == user %}
+                  <form action="{% url 'books_recommend_post' book.id book.volumeInfo.title data.user.id %}" method="POST">
+                    {% csrf_token %}
+                  </form>
+                  <div class="text-center">
+                      {% if data.user.image %}
+                          <img class="img-fluid rounded-circle news-feed-bigger-img-size" src="{{ data.user.image_thumbnail.url }}"/>
+                      {% else %}
+                          <img class="img-fluid rounded-circle news-feed-bigger-img-size" src="{% static 'img/user_icon.png' %}"/>
+                      {% endif %}
+                  </div>     
+                  <div class="text-center">
+                      <p class="mt-2 user-fullname"><b>{{ data.user.first_name }} {{ data.friend.last_name }}</b></p>
+                  </div>
+                {% else %}
+                  <form action="{% url 'books_recommend_post' book.id book.volumeInfo.title data.friend.id %}" method="POST">
+                    {% csrf_token %}
+                  </form>
+                  <div class="text-center">          
+                    {% if data.friend.image %}
+                        <img class="img-fluid rounded-circle news-feed-bigger-img-size"src="{{ data.friend.image_thumbnail.url }}"/>
+                    {% else %}
+                        <img class="img-fluid rounded-circle news-feed-bigger-img-size" src="{% static 'img/user_icon.png' %}"/>
+                    {% endif %}
+                  </div>
+                  <div class="text-center">
+                      <p class="mt-2 user-fullname">{{ data.friend.first_name }} {{ data.friend.last_name }}</p>
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Modal -->
+{% endif %}
