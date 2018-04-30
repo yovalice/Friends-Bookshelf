@@ -96,7 +96,7 @@
                             <div class="post-information">
                                 <div class="user-post-box mb-3 mt-3 clearfix">
                                     <div class="float-left mr-1">
-                                        <a href="{% url 'user_details' post.user.pk %}">
+                                        <a>
                                             {% if post.user.image %}
                                                 <img src="{{ post.user.image_thumbnail.url }}" class="rounded-circle newsfeed-post-img-size"/>
                                             {% else %}
@@ -106,7 +106,7 @@
                                     </div>
                                     <div class="float-left">
                                         <p class="mb-0">
-                                            <a href="{% url 'user_details' post.user.pk %}">
+                                            <a>
                                                 <b>{{ post.user.first_name }} {{ post.user.last_name }}</b>
                                             </a>
                                         </p>

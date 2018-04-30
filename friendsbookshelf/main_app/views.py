@@ -41,24 +41,26 @@ def home_page(request):
             form = UserPostForm(request.user)
 
         friend_list = FriendList.objects.select_related(
-            'friend').filter(Q(user=request.user) | Q(friend=request.user), accept=True).values_list('friend', flat=True)
+            'friend', 'user').filter(Q(user=request.user) | Q(friend=request.user))
 
-        posts = Post.objects.select_related('book', 'book__book', 'user').prefetch_related(
-            'comments', 'comments__user').filter(Q(user=request.user) | Q(user__in=friend_list)).order_by('-created_date')[:8]
+        # posts
+        posts = Post.objects.distinct().select_related('book', 'book__book', 'user').prefetch_related(
+            'comments', 'comments__user').filter(Q(user=request.user) |
+                    Q(user__in=friend_list.filter(accept=True).values_list('friend__pk', flat=True)) |
+                    Q(user__in=friend_list.filter(accept=True).values_list('user__pk', flat=True))
+                    ).order_by('-created_date')[:8]
 
-        my_books_read = BooksRead.objects.filter(user=request.user).values_list('book__pk', flat=True)
+        users_from_friend_list = User.objects.filter(
+            Q(pk__in=friend_list.values_list('friend__pk', flat=True)) | Q(pk__in=friend_list.values_list('user__pk', flat=True)))
+        
+        my_books_read = BooksRead.objects.filter(user=request.user, liked=True)
 
-        print(my_books_read)
+        friends_with_books_read = BooksRead.objects.distinct().filter(
+            book__in=my_books_read.values_list('book__pk', flat=True)).values_list('user__pk', flat=True)
 
-        friends_with_books_read = BooksRead.objects.exclude(
-            user__in=friend_list, book__in=my_books_read).exclude(
-                user=request.user).values_list('user__pk', flat=True)
-
-        print(friends_with_books_read)
-
-        friends_suggest = User.objects.filter(pk__in=friends_with_books_read)
-
-        print(friends_suggest)
+        friends_suggest = User.objects.filter(pk__in=friends_with_books_read).exclude(
+            Q(pk=request.user.pk) |
+            Q(pk__in=users_from_friend_list.values_list('pk', flat=True)))[:6]
 
         return render(request, 'newsfeed.html', {'posts': posts, 'friends_suggest': friends_suggest, 'form': form})
     else:

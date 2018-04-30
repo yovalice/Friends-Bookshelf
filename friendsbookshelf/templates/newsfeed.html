@@ -124,8 +124,8 @@
                 <!--<button class="btn btn-primary btn-block" id="load-more-posts">Load more posts</button>-->
                 <input type="text" value='2' hidden>
             {% else %}
-                <div class="">
-                    <h4>We don't have any post from your friends, be the first to post something!!</h4>
+                <div class="text-center">
+                    <h5>We don't have any post from your friends or you, be the first to post something!!</h5>
                 </div>
             {% endif %}
         </div>
@@ -138,7 +138,7 @@
                 <div class="row">
                     {% if friends_suggest.count %}
                         {% for user in friends_suggest %}
-                            <div class="col-lg-6">
+                            <div class="col-lg-6 mb-3">
                                 <a href="{% url 'user_details' user.pk %}">
                                     <div class="card text-center pt-1">    
                                         <div class="avatar">
