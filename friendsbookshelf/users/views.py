@@ -164,7 +164,7 @@ class EditUserInformation(SuccessMessageMixin, UpdateView):
         return super(EditUserInformation, self).dispatch(*args, **kwargs)
     
     def get_success_url(self):
-        return reverse_lazy('user_information')
+        return reverse_lazy('user_information', kwargs={'pk': self.request.user.pk})
 
 
 @login_required

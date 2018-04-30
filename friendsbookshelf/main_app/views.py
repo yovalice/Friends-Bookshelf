@@ -21,6 +21,37 @@ from main_app.forms import UserPostForm
 
 
 def home_page(request):
+    books_array = [
+        'Harry Potter',
+        'Lord of the rings',
+        'Game of Thrones',
+        'A walk to Remember',
+        'Emily Griffin',
+        'Pride and Prejudice',
+        'Comic books',
+        'Manga',
+        'Les Miserables',
+        'Graphic Novels',
+        'Romantic Comedy',
+        'Romantic',
+        'Horror',
+        'Comedy',
+        'Video Games',
+        'University Book',
+        'Biology',
+        'Math',
+        'paulo coelho',
+        'hunger games',
+        '100 años de soledad',
+        'Gabriel García Márquez'
+    ]
+
+    q = random.choice(books_array)
+
+    params = '?maxResults=6&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
+
+    books = requests.get(settings.GOOGLE_BOOKS_API + params).json
+
     if request.user.is_authenticated:
         if request.method == 'POST':
             form = UserPostForm(user=request.user, data=request.POST)
@@ -62,35 +93,8 @@ def home_page(request):
             Q(pk=request.user.pk) |
             Q(pk__in=users_from_friend_list.values_list('pk', flat=True)))[:6]
 
-        return render(request, 'newsfeed.html', {'posts': posts, 'friends_suggest': friends_suggest, 'form': form})
+        return render(request, 'newsfeed.html', {'posts': posts, 'friends_suggest': friends_suggest, 'form': form, 'books': books})
     else:
-        books_array = [
-            'Harry Potter',
-            'Lord of the rings',
-            'Game of Thrones',
-            'A walk to Remember',
-            'Emily Griffin',
-            'Pride and Prejudice',
-            'Comic books',
-            'Manga',
-            'Les Miserables',
-            'Graphic Novels',
-            'Romantic Comedy',
-            'Romantic',
-            'Horror',
-            'Comedy',
-            'Video Games',
-            'University Book',
-            'Biology',
-            'Math'
-        ]
-
-        q = random.choice(books_array)
-
-        params = '?maxResults=6&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
-
-        books = requests.get(settings.GOOGLE_BOOKS_API + params).json
-
         return render(request, 'home.html',
                     {'books': books})
 
