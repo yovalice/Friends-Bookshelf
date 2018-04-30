@@ -42,7 +42,7 @@
                                 <div class="content">
                                     <p class="mt-2"><b>{{ data.user.first_name }} {{ data.friend.last_name }}</b></p>
                                 </div>
-                                <p>{% if data.accept %}<span class="badge badge-pill badge-primary">Friend</span>{% else %}<span class="badge badge-pill badge-danger">Waiting your Friend Request response</span>{% endif %}</p>
+                                <p>{% if data.accept %}<span class="badge badge-pill badge-primary">Friend</span>{% else %}<span class="badge badge-pill badge-danger">Waiting your friend request response</span>{% endif %}</p>
                             </div>
                         </a>
                     {% else %}
@@ -66,7 +66,7 @@
                                 <div class="content">
                                     <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
                                 </div>
-                                <p>{% if data.accept %}<span class="badge badge-pill badge-primary">Friend</span>{% else %}<span class="badge badge-pill badge-danger">Waiting to accept Friend Request</span>{% endif %}</p>
+                                <p>{% if data.accept %}<span class="badge badge-pill badge-primary">Friend</span>{% else %}<span class="badge badge-pill badge-danger">Waiting to accept friend request</span>{% endif %}</p>
                             </div>
                         </a>
                     {% endif %}
