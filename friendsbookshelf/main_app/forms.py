@@ -17,7 +17,7 @@ class UserPostForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         super(UserPostForm, self).__init__(*args, **kwargs)
-        self.fields['book_choice'].queryset = BooksRead.objects.filter(
+        self.fields['book_choice'].queryset = BooksRead.objects.select_related('book').filter(
             user=user).order_by('-created_date')
     
     

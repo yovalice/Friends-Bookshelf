@@ -17,37 +17,39 @@ from users.models import BookRecommendedByFriend, FriendList
 
 
 def books_list(request):
-    max_results = 39
+    # max_results = 39
 
-    try:
-        page = int(request.GET.get('page', 1))
+    # try:
+    #     page = int(request.GET.get('page', 1))
 
-        if int(page >= 2):
-            start_index = int(max_results) * (page-1)
-        else:
-            start_index = '0'
+    #     if int(page >= 2):
+    #         start_index = int(max_results) * (page-1)
+    #     else:
+    #         start_index = '0'
 
-    except PageNotAnInteger:
-        start_index = '0'
+    # except PageNotAnInteger:
+        # start_index = '0'
 
     q = request.GET.get('q')
 
-    params = '?maxResults=' + str(max_results) + '&startIndex=' + str(start_index) + '&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
+    params = '?maxResults=39&startIndex=0&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
 
     books = requests.get(settings.GOOGLE_BOOKS_API + params).json
 
+    # return render(request, 'books/list.html',
+    #               {'books': books,
+    #                'q': q,
+    #                'start_index': start_index,
+    #                'page': page})
     return render(request, 'books/list.html',
                   {'books': books,
-                   'q': q,
-                   'start_index': start_index,
-                   'page': page})
+                   'q': q})
 
 
 def books_detail(request, volume_id):
     book = requests.get(settings.GOOGLE_BOOKS_API + volume_id).json()
     if request.user.is_authenticated:
         read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
-        print(read)
         wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
         friends = FriendList.objects.select_related('friend', 'user').filter(
             Q(user=request.user) | Q(friend=request.user), accept=True)
