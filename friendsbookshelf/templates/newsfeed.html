@@ -30,6 +30,7 @@
             </div>
 
             {% if posts.count %}
+                <div class="all-post-box">
                 {% for post in posts %}
                     <div class="post-comment-box mb-4 ajax-post" id='{{ post.id }}'>
                         <div class="post-information">
@@ -118,8 +119,10 @@
                         </div>
                     </div>
                 {% endfor %}
+                </div>
 
-                <button class="btn btn-primary btn-block">Load more posts.</button>
+                <!--<button class="btn btn-primary btn-block" id="load-more-posts">Load more posts</button>-->
+                <input type="text" value='2' hidden>
             {% else %}
                 <div class="">
                     <h4>We don't have any post from your friends, be the first to post something!!</h4>
@@ -128,57 +131,34 @@
         </div>
 
         <div class="col-md-4">
-            <div class="newsfeed-box-form">
-                <h4>Friends Suggest</h4>
+            <div class="newsfeed-box-form text-center">
+                <h5>Friends Suggest</h5>
                 <hr/>
 
-                {% if friend_suggest.count %}
-                    {% for friend in friend_suggest %}
-                        <div class="col-md-4">
-                            {% if data.friend == user %}
-                                <a>   
-                                    <div class="text-center">
-                                        {% if data.user.image %}
-                                            <img class="img-fluid rounded-circle" src="{{ data.user.image_thumbnail.url }}"/>
-                                        {% else %}
-                                            <img class="img-fluid rounded-circle" src="{% static 'img/user_icon.png' %}"/>
-                                        {% endif %}
-                                    </div>     
-                                    <div class="content">
-                                            <p class="mt-2"><b>{{ data.user.first_name }} {{ data.friend.last_name }}</b></p>
-                                        </div>
-                                </a>
-                            </div>
-
-                            {% else %}
-                                <a>
-                                    <div class="card">
-                                        <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
-        
-                                        {% if data.friend.image %}
-                                            <img class="src-image" src="{{ data.friend.image_thumbnail.url }}"/>
-                                        {% else %}
-                                            <img class="src-image" src="{% static 'img/user_icon.png' %}"/>
-                                        {% endif %}
-        
+                <div class="row">
+                    {% if friends_suggest.count %}
+                        {% for user in friends_suggest %}
+                            <div class="col-lg-6">
+                                <a href="{% url 'user_details' user.pk %}">
+                                    <div class="card text-center pt-1">    
                                         <div class="avatar">
-                                            {% if data.friend.image %}
-                                                <img src="{{ data.friend.image_thumbnail.url }}"/>
+                                            {% if user.image %}
+                                                <img class="rounded-circle newsfeed-post-img-size" src="{{ user.image_thumbnail.url }}"/>
                                             {% else %}
-                                                <img src="{% static 'img/user_icon.png' %}"/>
+                                                <img class="rounded-circle newsfeed-post-img-size" src="{% static 'img/user_icon.png' %}"/>
                                             {% endif %}
                                         </div>
                                         <div class="content">
-                                            <p class="mt-2"><b>{{ data.friend.first_name }} {{ data.friend.last_name }}</b></p>
+                                            <p class="mt-1 mb-1"><b>{{ user.first_name }} {{ user.last_name }}</b></p>
                                         </div>
                                     </div>
                                 </a>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>We don't have any friend suggestions right now.</p>
-                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>We don't have any friend suggestions right now.</p>
+                    {% endif %}
+                </div>
             </div>
 
         </div>
@@ -188,4 +168,32 @@
 {% block extra_js %}
     <script type="text/javascript" src="{% static 'js/sweet-alert.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/newsfeed.js' %}"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Load more posts Ajax
+            $("#load-more-posts").click(function(event){
+                var inputPage = $(this).next();
+                var page = inputPage.val();
+                $(this).toggleClass('disabled').html('<i class="fas fa-spinner fa-spin"></i> Loading');
+
+                $.ajax({
+                    type:"GET",
+                    url:"ajax/comment/"+inputPage.val(),
+                    success: function(data){
+                        inputPage.val(page+1)
+
+                        console.log((inputPage.val(page+1)));
+
+                        if(data.has_next != true){
+                            $(this).addClass('ds-none');
+                        }else{
+                            $(this).toggleClass('disabled').html('Load more posts');
+                        }
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
 {% endblock %}

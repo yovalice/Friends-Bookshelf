@@ -1,18 +1,34 @@
 {% extends "common/base.html" %}
+{% load staticfiles %}
 
 {% block title %}Home Page{% endblock %}
 
 {% block content %}
-
     <div class="row">
-        {% for book in books.items %}
-            <div class="colxs-12 col-sm-6 col-md-4 mb-4">
-                <a href="{% url 'books_detail' book.id %}">
-                    <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
-                    <p class="mt-2" ><b>{{ book.volumeInfo.title }}</b></p>
-                </a>
+        <div class="col-sm-6">
+            <div class="text-center mt-5">
+                <img id="home-logo" class="mb-4" src="{% static 'img/logo2-big.png' %}" alt="Logo">
+                <h2>Welcome to Friends Bookshelf!</h2>
             </div>
-        {% endfor %}
-    </div>
+            <div class="mt-5 mb-3">
+                <a class="btn btn-primary btn-block mb-4" href="{% url 'register' %}">Register</a>
+                <a class="btn btn-outline-success btn-block" href="{% url 'login' %}">Login</a>
+            </div>
+        </div>
 
+        <div class="col-sm-6">
+            <h5 class="text-center mt-3">Example of books you could see in the app:</h5>
+            <hr />
+            <div class="row mt-4">
+                {% for book in books.items %}
+                    <div class="col-sm-3 offset-sm-1 text-center">
+                        <a href="{% url 'books_detail' book.id %}">
+                            <img class="home-book-img-size" src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                            <p class="mt-2" >{{ book.volumeInfo.title }}</p>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

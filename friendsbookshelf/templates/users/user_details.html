@@ -1,6 +1,7 @@
 {% extends "common/base.html" %}
 {% load extras %}
 {% load staticfiles %}
+{% load humanize %}
 
 {% block title %}User Detail | {{ user_detail.first_name }} {{ user_detail.last_name }}{% endblock %}
 
@@ -89,21 +90,53 @@
                 <hr />
 
                 {% if posts.count %}
+                    <div class="all-post-box">
                     {% for post in posts %}
-                        <div class="box-form post" id='{{ post.id }}'>
-                            <div class="post information">
-                                {% if post.user.image %}
-                                    <img src="{{ post.user.image_thumbnail.url }}" class="rounded"/>
-                                {% else %}
-                                    <i class="far fa-user"></i>
-                                {% endif %}
-                                <b> {{ post.user.first_name }} {{ post.user.last_name }}</b>
+                        <div class="post-comment-box mb-4 ajax-post" id='{{ post.id }}'>
+                            <div class="post-information">
+                                <div class="user-post-box mb-3 mt-3 clearfix">
+                                    <div class="float-left mr-1">
+                                        <a href="{% url 'user_details' post.user.pk %}">
+                                            {% if post.user.image %}
+                                                <img src="{{ post.user.image_thumbnail.url }}" class="rounded-circle newsfeed-post-img-size"/>
+                                            {% else %}
+                                                <img src="{% static 'img/user_icon.png' %}" class="rounded-circle newsfeed-post-img-size"/>
+                                            {% endif %}
+                                        </a>
+                                    </div>
+                                    <div class="float-left">
+                                        <p class="mb-0">
+                                            <a href="{% url 'user_details' post.user.pk %}">
+                                                <b>{{ post.user.first_name }} {{ post.user.last_name }}</b>
+                                            </a>
+                                        </p>
+                                        <p class="text-small mb-0"><small>{{ post.created_date|naturalday|capfirst }} at {{ post.created_date|date:'P' }}</small></p>
+                                    </div>
+                                </div>
                                 <div class="post-box">
-                                    {{ post.description }}
+                                {{ post.description }}
+
+                                {% if post.book %}
+                                    {% with post.book.book.google_id|load_book as book_info %}
+                                        <div class="row mt-4 suggested-books-box">
+                                            <div class="col-sm-3 pt-4">
+                                            <a href="{% url 'books_detail' post.book.book.google_id %}" target="_blank">
+                                                <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}" class="img-fluid">
+                                                <p class="mt-2 text-center"><b>{{ book_info.volumeInfo.title }}</b></p>
+                                            </a>
+                                            </div>
+                                            <div class="col-sm-9 books-box-description">
+                                            <p class='short-text'>{{ book_info.volumeInfo.description|safe|truncatewords:55 }} {% if book_info.volumeInfo.description|safe|length > 200 %} <a class="read-more" href="">Read More</a>{% endif %}</p>
+                                            <p class="d-none full-text">{{ book_info.volumeInfo.description|safe }} <a class="read-less" href="">Read Less</a></p>
+                                            </div>
+                                        </div>
+                                    {% endwith %}
+                                {% endif %}
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
+                    </div>
                 {% else %}
                     <h5>This user dosen't have any Post.</h5>
                 {% endif %}

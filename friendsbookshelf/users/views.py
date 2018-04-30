@@ -1,10 +1,8 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect
-from django import forms
 from django.shortcuts import redirect
-from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
@@ -13,6 +11,13 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.mail import EmailMultiAlternatives
+from django.utils.encoding import force_bytes
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.tokens import default_token_generator
+from django.conf import settings
+from django.template.loader import render_to_string
 
 from pure_pagination.mixins import PaginationMixin
 
@@ -41,7 +46,6 @@ def register(request):
                 user.first_name = first_name
                 user.last_name = last_name
                 user.save()
-                user = authenticate(username=username, password=password)
                 auth_login(request, user)
                 return HttpResponseRedirect('/')
             else:
@@ -61,10 +65,9 @@ def login(request):
             userObj = form.cleaned_data
             username = userObj['username']
             password = userObj['password']
-            if User.objects.filter(username=username).exists() or User.objects.filter(email=username).exists():
-                user = authenticate(username=username, password=password)
-                auth_login(request, user)
-                # messages.add_message(request, messages.SUCCESS, 'Looks like that username does not exists or the password is incorrect.')
+            user = User.objects.filter(Q(username=username) | Q(email=username))
+            if user.exists():
+                auth_login(request, user.first())
                 return HttpResponseRedirect('/')
             else:
                 data = {'form': form}
@@ -81,49 +84,72 @@ def forgot(request):
     if request.method == 'POST':
         form = UserForgotForm(request.POST)
         if form.is_valid():
-            subject = 'Reset Password'
-            message = ''
-            sender = form.cleaned_data['email']
-            cc_myself = form.cleaned_data['cc_myself']
+            try:
+                user = User.objects.get(email=form.cleaned_data['email'])
+            except User.DoesNotExist:
+                messages.error(request, 'The user with that email address does not exist.')
+                return HttpResponseRedirect('/forgot/')
+ 
+            uid = user.pk
+            token = default_token_generator.make_token(user)
 
-            recipients = ['info@example.com']
-            if cc_myself:
-                recipients.append(sender)
+            if settings.DEBUG:
+                link = 'http://127.0.0.1:8000/user_reset_password/%s/%s/' % (uid, token)
+            else:
+                link = 'http://friendsbooksshelf.com/user_reset_password/%s/%s/' % (uid, token)
 
-            send_mail(subject, message, sender, recipients)
-            return render(request, 'users/forgot.html', {'form': form})
+            text_content = 'Text'
+            html_content = render_to_string(
+                'users/password_reset_email.html',
+                {'link': link}
+            )
+
+            msg = EmailMultiAlternatives(subject='Password Reset',
+                               from_email='no-reply@friendsbooksshelf.com', to=[form.cleaned_data['email']])
+            msg.attach_alternative(html_content, "text/html")
+            msg.use_template_subject = True
+            msg.use_template_from = True
+            msg.send()
+            messages.success(request, 'An email to reset your password was sent to ' + form.cleaned_data['email'] + ' email address.')
+        return HttpResponseRedirect('/forgot/')
     else:
         form = UserForgotForm()
 
     return render(request, 'users/forgot.html', {'form': form})
 
 
-def confirm_password(request):
+def user_reset_password(request, uid, token):
     if request.method == 'POST':
         form = UserConfirmationPasswordForm(request.POST)
         if form.is_valid():
             password1 = form.cleaned_data['password1']
             password2 = form.cleaned_data['password2']
 
-            return render(request, 'users/confirm.html', {'form': form})
+            if password1 != password2:
+                messages.error(request, 'The Password and Confirm Password are not the same.')
+                return HttpResponseRedirect('/user_reset_password/' + uid + '/' + token + '/')
+
+            if not uid or not token:
+                messages.error(request, 'The token to change your password is invalid.')
+                return HttpResponseRedirect('/')
+
+            user_pk = uid
+            user = User.objects.get(pk=user_pk)
+
+            if user is not None and default_token_generator.check_token(user, token):
+                user.password = make_password(password2)
+                user.save()
+                messages.success(request, 'The password for your user was successfully changed.')
+                return HttpResponseRedirect('/user_reset_password/' + uid + '/' + token + '/')
+            else:
+                messages.error(request, 'The token to change your password is invalid.')
+                return HttpResponseRedirect('/user_reset_password/' + uid + '/' + token + '/')
+        else:
+            return HttpResponseRedirect('/user_reset_password/' + uid + '/' + token + '/')
     else:
         form = UserConfirmationPasswordForm()
-    return render(request, 'users/confirm.html', {'form': form})
 
-
-@login_required
-def edit_user_information(request):
-    if request.method == 'POST':
-        form = UserInformationForm(request.POST)
-        if form.is_valid():
-            password1 = form.cleaned_data['password1']
-            password2 = form.cleaned_data['password2']
-
-            return render(request, 'users/edit_user_information.html', {'form': form})
-    else:
-        form = UserInformationForm()
-
-    return render(request, 'users/edit_user_information.html', {'form': form})
+    return render(request, 'users/user_reset_password.html', {'form': form, 'uid': uid, 'token': token})
 
 
 class EditUserInformation(SuccessMessageMixin, UpdateView):
@@ -138,7 +164,7 @@ class EditUserInformation(SuccessMessageMixin, UpdateView):
         return super(EditUserInformation, self).dispatch(*args, **kwargs)
     
     def get_success_url(self):
-        return reverse_lazy('user_information', kwargs={'pk': self.request.user.pk})
+        return reverse_lazy('user_information')
 
 
 @login_required

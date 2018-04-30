@@ -58,3 +58,71 @@
   border: 1px solid #ccc;
   box-shadow: 1px 1px 3px #b1b1b1;
 }
+
+.load-animate {
+  -animation: spin .7s infinite linear;
+  -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+  from { -webkit-transform: rotate(0deg);}
+  to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+  from { transform: scale(1) rotate(0deg);}
+  to { transform: scale(1) rotate(360deg);}
+}
+
+
+/* Newsfeed and detail user Post CSS */
+.post-comment-box{
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  box-shadow: 1px 1px 5px #757575;
+}
+
+.post-information{
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.comments-box, .insert-comment-box{
+  padding-left: 20px;
+  padding-right: 20px;
+  background: #f1f5fd;
+}
+
+.post-box{
+  padding: 12px;
+}
+
+.newsfeed-box-form{
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 1px 1px 4px #717171;
+}
+
+.suggested-books-box{
+border: 1px solid lightgray;
+margin: 20px;
+border-radius: 8px;
+}
+
+.books-box-description{
+border-left: 1px solid lightgray;
+}
+/* end Newsfeed css */
+
+
+
+/* Homepage css */
+#home-logo{
+  width: 450px;
+}
+
+.home-book-img-size{
+  width: 90px;
+}
+/* end Homepage css */

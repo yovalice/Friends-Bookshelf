@@ -17,7 +17,7 @@ from users.models import BookRecommendedByFriend, FriendList
 
 
 def books_list(request):
-    max_results = 40
+    max_results = 39
 
     try:
         page = int(request.GET.get('page', 1))
@@ -49,7 +49,7 @@ def books_detail(request, volume_id):
         read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
         wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
         friends = FriendList.objects.select_related('friend').filter(
-            Q(user=request.user) | Q(friend=request.user))
+            Q(user=request.user) | Q(friend=request.user), accept=True)
     else:
         read = None
         wishlist = None

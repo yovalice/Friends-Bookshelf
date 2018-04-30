@@ -8,7 +8,7 @@
     
     <div class="row">
         {% for book in books.items %}
-            <div class="colxs-12 col-sm-6 col-md-4 mb-4">
+            <div class="colxs-12 col-sm-6 col-md-4 mb-4 text-center">
                 <a href="{% url 'books_detail' book.id %}">
                     <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
                     <p class="mt-2" ><b>{{ book.volumeInfo.title }}</b></p>
