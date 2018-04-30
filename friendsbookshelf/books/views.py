@@ -47,8 +47,9 @@ def books_detail(request, volume_id):
     book = requests.get(settings.GOOGLE_BOOKS_API + volume_id).json()
     if request.user.is_authenticated:
         read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
+        print(read)
         wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
-        friends = FriendList.objects.select_related('friend').filter(
+        friends = FriendList.objects.select_related('friend', 'user').filter(
             Q(user=request.user) | Q(friend=request.user), accept=True)
     else:
         read = None

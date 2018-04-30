@@ -26,14 +26,14 @@
               <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
                 {% csrf_token %}
                 <input type="text" class="hidden d-none" value='True' name='liked'>
-                <button class="btn btn-block btn-primary" {% if read.liked %}disabled{% endif %}>Like</button>
+                <button class="btn btn-block btn-primary" {% if read and read.liked %}disabled{% endif %}>Like</button>
               </form>
             </div>
             <div class="text-center">
               <form action="{% url 'books_like_dislike_post' book.id book.volumeInfo.title %}" method="POST">
                 {% csrf_token %}
                 <input type="text" class="hidden d-none" value='False' name='liked'>
-                <button class="btn btn-block btn-primary" {% if not read.liked %}disabled{% endif %}>Dislike</button>
+                <button class="btn btn-block btn-primary" {% if read and not read.liked %}disabled{% endif %}>Dislike</button>
               </form>
             </div>
             <div class="text-center">

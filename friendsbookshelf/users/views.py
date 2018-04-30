@@ -172,7 +172,7 @@ def user_details(request, id):
     user = User.objects.get(id=id)
 
     friend_request_from_user = FriendList.objects.filter(
-        user_id=id, friend=request.user)
+        user_id=user, friend=request.user)
 
     if friend_request_from_user.filter(accept=True).exists():
         friend_request_from_user_accept = 'friend_request_from_user'
@@ -183,10 +183,9 @@ def user_details(request, id):
 
     friend = FriendList.objects.filter(friend=id, user=request.user)
 
-    posts = Post.objects.select_related('book').prefetch_related(
-        'comments').filter(user=user).order_by('-id')[:6]
+    posts = Post.objects.select_related('book', 'user', 'book__book',).filter(user=user).order_by('-id')[:6]
 
-    books_read = BooksRead.objects.filter(user=user).order_by('-id')[:6]
+    books_read = BooksRead.objects.select_related('book').filter(user=user).order_by('-id')[:6]
 
     data = {'user_detail': user, 'books_read': books_read,
             'posts': posts, 'friend_accepted': friend.filter(accept=True).exists(),
@@ -248,13 +247,13 @@ class Friends(PaginationMixin, ListView):
         accept = self.request.GET.get('accept')
 
         if accept=='True':
-            friends = FriendList.objects.select_related('friend').filter(
+            friends = FriendList.objects.select_related('friend', 'user').filter(
                 Q(user=self.request.user) | Q(friend=self.request.user), accept=True)
         elif accept=='False':
-            friends = FriendList.objects.select_related('friend').filter(
+            friends = FriendList.objects.select_related('friend', 'user').filter(
                 Q(user=self.request.user) | Q(friend=self.request.user), accept=False)
         else:
-            friends = FriendList.objects.select_related('friend').filter(
+            friends = FriendList.objects.select_related('friend', 'user').filter(
                 Q(user=self.request.user) | Q(friend=self.request.user))
 
         return friends
