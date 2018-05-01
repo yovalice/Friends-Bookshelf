@@ -27,7 +27,7 @@
                       {% endif %}
                   </div>     
                   <div class="text-center">
-                      <p class="mt-2 user-fullname">{{ data.user.first_name }} {{ data.friend.last_name }}</p>
+                      <p class="mt-2 user-fullname">{{ data.user.first_name }} {{ data.user.last_name }}</p>
                   </div>
                 {% else %}
                   <form action="{% url 'books_recommend_post' book.id book.volumeInfo.title data.friend.id %}" method="POST">
