@@ -74,8 +74,7 @@
                                           </a>
                                         </div>
                                         <div class="col-sm-9 books-box-description">
-                                          <p class='short-text'>{{ book_info.volumeInfo.description|safe|truncatewords:55 }} {% if book_info.volumeInfo.description|safe|length > 200 %} <a class="read-more" href="">Read More</a>{% endif %}</p>
-                                          <p class="d-none full-text">{{ book_info.volumeInfo.description|safe }} <a class="read-less" href="">Read Less</a></p>
+                                          <p class='book-description-text overflow-hidden'>{{ book_info.volumeInfo.description|safe }}</p>
                                         </div>
                                       </div>
                                   {% endwith %}
@@ -180,6 +179,7 @@
 
 {% block extra_js %}
     <script type="text/javascript" src="{% static 'js/sweet-alert.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/read-more.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/newsfeed.js' %}"></script>
 
     <script>

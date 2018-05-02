@@ -68,8 +68,7 @@
             No
             {% endif %}
           </p>
-          <p class='short-text'>{{ book.volumeInfo.description|safe|truncatewords:80 }} {% if book.volumeInfo.description|safe|length > 500 %} <a class="read-more" href="">Read More</a>{% endif %}</p>
-          <p class="d-none full-text">{{ book.volumeInfo.description|safe }} <a class="read-less" href="">Read Less</a></p>
+          <p>{{ book.volumeInfo.description|safe }}</p>
       </div>
   </div>
 </div>

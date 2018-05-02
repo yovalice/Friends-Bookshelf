@@ -113,6 +113,10 @@ border-radius: 8px;
 .books-box-description{
 border-left: 1px solid lightgray;
 }
+
+.overflow-hidden{
+  overflow: hidden;
+}
 /* end Newsfeed css */
 
 
