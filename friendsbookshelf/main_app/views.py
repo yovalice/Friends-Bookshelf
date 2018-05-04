@@ -52,6 +52,8 @@ def home_page(request):
 
     books = requests.get(settings.GOOGLE_BOOKS_API + params).json
 
+    print(settings.GOOGLE_BOOKS_API + params)
+
     if request.user.is_authenticated:
         if request.method == 'POST':
             form = UserPostForm(user=request.user, data=request.POST)

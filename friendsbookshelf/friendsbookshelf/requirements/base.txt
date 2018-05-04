@@ -2,6 +2,8 @@ django-appconf==1.0.2
 django-bootstrap4==0.0.6
 django-imagekit==4.0.2
 Django==2.0.5
+django-pure-pagination==0.3.0
 pilkit==2.0
 Pillow==5.0.0
+requests==2.18.4
 six==1.11.0

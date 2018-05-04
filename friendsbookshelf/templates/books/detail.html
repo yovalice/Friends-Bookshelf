@@ -20,6 +20,8 @@
             <img src="{{ book.volumeInfo.imageLinks.small }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
           {% elif book.volumeInfo.imageLinks.thumbnail %}
             <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" class="img-fluid" alt="{{ book.volumeInfo.title }}">
+          {% else %}
+            <img src="{% static 'img/no-book-image.jpg' %}" class="img-fluid" alt="No image">
           {% endif %}
           {% if user.is_authenticated %}
             <div class="text-center">

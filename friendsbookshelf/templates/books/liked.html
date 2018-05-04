@@ -1,5 +1,6 @@
 {% extends "common/base.html" %}
 {% load extras %}
+{% load staticfiles %}
 
 {% block title %}Books Reads{% endblock %}
 
@@ -19,7 +20,11 @@
                 {% with data.book.google_id|load_book as book_info %}
                     <div class="col-xs-12 col-sm-4 text-center mb-4">
                         <a href="{% url 'books_detail' data.book.google_id %}">
-                            <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
+                            {% if book_info.volumeInfo.imageLinks %}
+                                <img class="list-book-image-size" src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
+                            {% else %}
+                                <img class="list-book-image-size" src="{% static 'img/no-book-image.jpg' %}" alt="No book image" class="img-fluid">
+                            {% endif %}
                             <p class="mt-2"><b>{{ book_info.volumeInfo.title }}</b></p>
                         </a>
                     </div>

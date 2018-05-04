@@ -1,4 +1,5 @@
 {% extends "common/base.html" %} 
+{% load staticfiles %}
 
 {% block title %}Books{% endblock %}
 
@@ -10,7 +11,11 @@
         {% for book in books.items %}
             <div class="colxs-12 col-sm-6 col-md-4 mb-4 text-center">
                 <a href="{% url 'books_detail' book.id %}">
-                    <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                    {% if book.volumeInfo.imageLinks %}
+                        <img class="list-book-image-size" src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                    {% else %}
+                        <img class="list-book-image-size" src="{% static 'img/no-book-image.jpg' %}" alt="No book image" class="img-fluid">
+                    {% endif %}
                     <p class="mt-2" ><b>{{ book.volumeInfo.title }}</b></p>
                 </a>
             </div>

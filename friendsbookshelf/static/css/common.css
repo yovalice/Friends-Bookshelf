@@ -74,6 +74,10 @@
   to { transform: scale(1) rotate(360deg);}
 }
 
+.list-book-image-size{
+  width: 128px;
+}
+
 
 /* Newsfeed and detail user Post CSS */
 .post-comment-box{

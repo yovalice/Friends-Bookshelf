@@ -164,9 +164,13 @@
                 <hr />
                 <div class="row mt-4">
                     {% for book in books.items %}
-                        <div class="col-sm-4 offset-sm-1 text-center">
+                        <div class="col-md-6 text-center">
                             <a href="{% url 'books_detail' book.id %}">
-                                <img class="home-book-img-size" src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                                {% if book.volumeInfo.imageLinks %}
+                                    <img class="home-book-img-size" src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                                {% else %}
+                                    <img class="home-book-img-size" src="{% static 'img/no-book-image.jpg' %}" alt="No book image">
+                                {% endif %}
                                 <p class="mt-2" >{{ book.volumeInfo.title }}</p>
                             </a>
                         </div>

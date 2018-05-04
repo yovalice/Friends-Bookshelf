@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="text-center mt-5">
-                <img id="home-logo" class="mb-4" src="{% static 'img/logo2-big.png' %}" alt="Logo">
+                <img id="home-logo" class="mb-4 img-fluid" src="{% static 'img/logo2-big.png' %}" alt="Logo">
                 <h2>Welcome to Friends Bookshelf!</h2>
             </div>
             <div class="mt-5 mb-3">
@@ -21,9 +21,13 @@
             <hr />
             <div class="row mt-4">
                 {% for book in books.items %}
-                    <div class="col-sm-3 offset-sm-1 text-center">
+                    <div class="col-sm-6 col-md-5 offset-md-1 col-lg-3 offset-lg-1 text-center">
                         <a href="{% url 'books_detail' book.id %}">
-                            <img class="home-book-img-size" src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                            {% if book.volumeInfo.imageLinks %}
+                                <img class="home-book-img-size" src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                            {% else %}
+                                <img class="home-book-img-size" src="{% static 'img/no-book-image.jpg' %}" alt="{{ book.volumeInfo.title }}">
+                            {% endif %}
                             <p class="mt-2" >{{ book.volumeInfo.title }}</p>
                         </a>
                     </div>
