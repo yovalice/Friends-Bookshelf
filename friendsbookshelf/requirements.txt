@@ -1,0 +1,1 @@
+-r friendsbookshelf/requirements/prod.txt
