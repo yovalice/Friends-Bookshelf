@@ -48,6 +48,7 @@ def books_list(request):
 
 def books_detail(request, volume_id):
     book = requests.get(settings.GOOGLE_BOOKS_API + volume_id).json()
+    
     if request.user.is_authenticated:
         read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
         wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()

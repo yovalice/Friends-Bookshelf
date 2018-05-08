@@ -69,7 +69,11 @@
                                       <div class="row mt-4 suggested-books-box">
                                         <div class="col-sm-3 pt-4">
                                           <a href="{% url 'books_detail' post.book.book.google_id %}" target="_blank">
-                                            <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}" class="img-fluid">
+                                            {% if book_info.volumeInfo.imageLinks %}
+                                                <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}" class="img-fluid">
+                                            {% else %}
+                                                <img src="{% static 'img/no-book-image.jpg' %}" alt="No book image" class="img-fluid">
+                                            {% endif %}
                                             <p class="mt-2 text-center"><b>{{ book_info.volumeInfo.title }}</b></p>
                                           </a>
                                         </div>

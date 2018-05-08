@@ -8,12 +8,16 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-5 col-md-4 col-lg-3 text-center">
+            <!-- Check if user have a profile image -->
             {% if user_detail.image %}
                 <img src="{{ user_detail.image_medium.url }}" class="img-fluid img-thumbnail"/>
             {% else %}
                 <img src="{% static 'img/user_icon.png' %}" class="img-fluid img-thumbnail"/>
             {% endif %}
 
+            <!-- Check if I sent a friend request, or received the friend request and depending on 
+                 that the user can accept or decline friend request, cancel friend request or 
+                 delete the user if they are friends -->
             {% if user_detail != user %}
                 <div class="text-center">
                     {% if friend_request_from_user_accept %}
@@ -58,14 +62,16 @@
                 </div>
             </div>
             <div class="mb-5">
-                <h2 class="text-lavendar">User Iformation</h2>
+                <h2 class="text-lavendar">User Information</h2>
                 <hr/>
+                <!-- User information -->
                 <p><b>First Name:</b> {{ user_detail.first_name }}</p>
                 <p><b>Last Name:</b> {{ user_detail.last_name }}</p>
                 <p><b>Bio:</b> {% if user_detail.bio %}{{ user_detail.bio }}{% else %}No bio.{% endif %}</p>
                 {% if user_detail.gender %}<p><b>Gender:</b>{% if user_detail.gender == "F" %} Female {% elif user_detail.gender == "M"%} Male{% endif %}</p>{% endif %}
             </div>
             <div class="mb-5">
+                <!-- Show list of books reads -->
                 <h2 class="text-lavendar">Latest Books Reads</h2>
                 <hr/>
                 {% if books_read.count %}
@@ -74,7 +80,11 @@
                             {% with data.book.google_id|load_book as book_info %}
                                 <div class="col-xs-12 col-sm-4 text-center mb-4">
                                     <a href="{% url 'books_detail' data.book.google_id %}">
-                                        <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
+                                        {% if book_info.volumeInfo.imageLinks %}
+                                            <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}">
+                                        {% else %}
+                                            <img class="list-book-image-size" src="{% static 'img/no-book-image.jpg' %}" alt="No book image" class="img-fluid">
+                                        {% endif %}
                                         <p class="mt-2"><b>{{ book_info.volumeInfo.title }}</b></p>
                                     </a>
                                 </div>
@@ -86,6 +96,7 @@
                 {% endif %}
             </div>
             <div class="mb-5">
+                <!-- Show list of posts -->
                 <h2 class="text-lavendar">Latest Posts</h2>
                 <hr />
 
@@ -121,7 +132,11 @@
                                         <div class="row mt-4 suggested-books-box">
                                             <div class="col-sm-3 pt-4">
                                             <a href="{% url 'books_detail' post.book.book.google_id %}" target="_blank">
-                                                <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}" class="img-fluid">
+                                                {% if book_info.volumeInfo.imageLinks %}
+                                                    <img src="{{ book_info.volumeInfo.imageLinks.thumbnail }}" alt="{{ book_info.volumeInfo.title }}" class="img-fluid">
+                                                {% else %}
+                                                    <img src="{% static 'img/no-book-image.jpg' %}" alt="No book image" class="img-fluid">
+                                                {% endif %}
                                                 <p class="mt-2 text-center"><b>{{ book_info.volumeInfo.title }}</b></p>
                                             </a>
                                             </div>

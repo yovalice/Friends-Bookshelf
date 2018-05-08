@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from books.models import Book, BooksRead
 
+
 class Post(models.Model):
     description = models.TextField(blank=True, null=True)
     book = models.ForeignKey(BooksRead, on_delete=models.CASCADE, blank=True, null=True)
@@ -11,6 +12,7 @@ class Post(models.Model):
 
     def __str__(self):
         return self.user.username + ' - ' + self.description
+
 
 class Comment(models.Model):
     text = models.TextField()
