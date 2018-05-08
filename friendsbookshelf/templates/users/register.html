@@ -10,9 +10,11 @@
     <hr/>
 
     <form method="POST" action="{% url 'register' %}">
+        <!-- Form error messages -->
         {% include "common/message.html" %}
 
         {% csrf_token %}
+        <!-- Load Form from the view.py -->
         {% bootstrap_form form %}
 
         {% buttons %}

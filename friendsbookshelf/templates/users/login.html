@@ -9,9 +9,12 @@
       <h2 class="text-center text-lavendar">Login</h2>
       <hr/>
       <form method="POST" action="{% url 'login' %}">
+        <!-- Form error messages -->
         {% include "common/message.html" %}
 
         {% csrf_token %}
+        
+        <!-- Load Form from the view.py -->
         {% bootstrap_form form %}
 
         <div class="text-center">

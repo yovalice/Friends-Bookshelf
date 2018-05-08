@@ -32,15 +32,25 @@ from main_app.models import Post
 
 
 def register(request):
+    '''
+        This is the user register/signup page.
+    '''
+    # Check if the form was submitted
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
+
+        # Check if the form is valid
         if form.is_valid():
+            # Get values from Form
             userObj = form.cleaned_data
             first_name = userObj['first_name']
             last_name = userObj['last_name']
             username = userObj['username']
             email = userObj['email']
             password = userObj['password']
+
+            # if the user exist then we create the user and do the login for the user,
+            # if the user does not exist we show an error message.
             if not User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists():
                 user = User.objects.create_user(username, email, password)
                 user.first_name = first_name
@@ -53,19 +63,31 @@ def register(request):
                 messages.error(request, 'Looks like the username or email with the information provided already exists.')
                 return render(request, 'users/register.html', data)
     else:
+        # Load form
         form = UserRegisterForm()
 
     return render(request, 'users/register.html', {'form': form})
 
 
 def login(request):
+    '''
+        This is the user login page.
+    '''
+    # Check if the form was submitted
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
+
+        # Check if the form is valid
         if form.is_valid():
+
+            # Get values from Form
             userObj = form.cleaned_data
             username = userObj['username']
             password = userObj['password']
             user = User.objects.filter(Q(username=username) | Q(email=username))
+
+            # if the user exist then we login the user in the application,
+            # if the user does not exist we show an error message.
             if user.exists():
                 auth_login(request, user.first())
                 return HttpResponseRedirect('/')
@@ -75,14 +97,21 @@ def login(request):
 
                 return render(request, 'users/login.html', data)
     else:
+        # Load form
         form = UserLoginForm()
 
     return render(request, 'users/login.html', {'form': form})
 
 
 def forgot(request):
+    '''
+        This is the user forgot password page.
+    '''
+    # Check if the form was submitted
     if request.method == 'POST':
         form = UserForgotForm(request.POST)
+
+        # Check if the form is valid
         if form.is_valid():
             try:
                 user = User.objects.get(email=form.cleaned_data['email'])
@@ -104,6 +133,7 @@ def forgot(request):
                 {'link': link}
             )
 
+            # Setup Email information for the forgot password and send the email
             msg = EmailMultiAlternatives(subject='Password Reset',
                                from_email='no-reply@friendsbooksshelf.com', to=[form.cleaned_data['email']])
             msg.attach_alternative(html_content, "text/html")
@@ -113,29 +143,42 @@ def forgot(request):
             messages.success(request, 'An email to reset your password was sent to ' + form.cleaned_data['email'] + ' email address.')
         return HttpResponseRedirect('/forgot/')
     else:
+        # Load form
         form = UserForgotForm()
 
     return render(request, 'users/forgot.html', {'form': form})
 
 
 def user_reset_password(request, uid, token):
+    '''
+        This is the user reset password page.
+    '''
+    # Check if the form was submitted
     if request.method == 'POST':
         form = UserConfirmationPasswordForm(request.POST)
+
+        # Check if the form is valid
         if form.is_valid():
+            # Get values from Form
             password1 = form.cleaned_data['password1']
             password2 = form.cleaned_data['password2']
 
+            # Check if the passwords are not equal to send an error message
             if password1 != password2:
                 messages.error(request, 'The Password and Confirm Password are not the same.')
                 return HttpResponseRedirect('/user_reset_password/' + uid + '/' + token + '/')
 
+            # Check if the forgot password token and uid values exists
             if not uid or not token:
                 messages.error(request, 'The token to change your password is invalid.')
                 return HttpResponseRedirect('/')
 
             user_pk = uid
+
+            # Get user information
             user = User.objects.get(pk=user_pk)
 
+            # If forgot password token and user are valid
             if user is not None and default_token_generator.check_token(user, token):
                 user.password = make_password(password2)
                 user.save()
@@ -147,16 +190,19 @@ def user_reset_password(request, uid, token):
         else:
             return HttpResponseRedirect('/user_reset_password/' + uid + '/' + token + '/')
     else:
+        # Load form
         form = UserConfirmationPasswordForm()
 
     return render(request, 'users/user_reset_password.html', {'form': form, 'uid': uid, 'token': token})
 
 
 class EditUserInformation(SuccessMessageMixin, UpdateView):
+    '''
+        This is the user Edit information page.
+    '''
     model = User
     form_class = UserInformationForm
     template_name = 'users/edit_user_information.html'
-    # fields = ['first_name', 'last_name', 'bio', 'genter', 'image']
     success_message = ("The User Information was updated successfully.")
 
     @method_decorator(login_required)
@@ -169,8 +215,19 @@ class EditUserInformation(SuccessMessageMixin, UpdateView):
 
 @login_required
 def user_details(request, id):
+    '''
+        This is the user profile view logic.
+    '''
+    # Load user information
     user = User.objects.get(id=id)
 
+    # Load user posts
+    posts = Post.objects.select_related('book', 'user', 'book__book').filter(user=user).order_by('-id')[:6]
+
+    # Load user Books Read
+    books_read = BooksRead.objects.select_related('book').filter(user=user).order_by('-id')[:6]
+
+    # Check if the user sent me a friend request
     friend_request_from_user = FriendList.objects.filter(
         user_id=user, friend=request.user)
 
@@ -181,11 +238,8 @@ def user_details(request, id):
     else:
         friend_request_from_user_accept = None
 
-    friend = FriendList.objects.filter(friend=id, user=request.user)
-
-    posts = Post.objects.select_related('book', 'user', 'book__book',).filter(user=user).order_by('-id')[:6]
-
-    books_read = BooksRead.objects.select_related('book').filter(user=user).order_by('-id')[:6]
+    # Check if I sent a friend request
+    friend = FriendList.objects.filter(user=request.user, friend_id=id)
 
     data = {'user_detail': user, 'books_read': books_read,
             'posts': posts, 'friend_accepted': friend.filter(accept=True).exists(),
@@ -195,8 +249,67 @@ def user_details(request, id):
     return render(request, 'users/user_details.html', data)
 
 
+class Friends(PaginationMixin, ListView):
+    '''
+        This is the user friends list page.
+    '''
+    paginate_by = 16
+    template_name = 'users/friends.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        accept = self.request.GET.get('accept')
+
+        if accept=='True':
+            friends = FriendList.objects.select_related('friend', 'user').filter(
+                Q(user=self.request.user) | Q(friend=self.request.user), accept=True)
+        elif accept=='False':
+            friends = FriendList.objects.select_related('friend', 'user').filter(
+                Q(user=self.request.user) | Q(friend=self.request.user), accept=False)
+        else:
+            friends = FriendList.objects.select_related('friend', 'user').filter(
+                Q(user=self.request.user) | Q(friend=self.request.user))
+
+        return friends
+
+
+class UserSearch(PaginationMixin, ListView):
+    '''
+        This is the User Search page.
+    '''
+    paginate_by = 16
+    template_name = 'users/user_search.html'
+    # filter_backends = (filters.SearchFilter,)
+    search_fields = ('username', 'first_name', 'last_name', 'email')
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            user_name = self.request.GET.get('user_name')
+        except:
+            user_name = ''
+
+        if(user_name and user_name != ''):
+            friends = User.objects.distinct().exclude(id=self.request.user.id).filter(
+                Q(first_name__icontains=user_name) | Q(last_name__icontains=user_name) |
+                Q(email__icontains=user_name))
+        else:
+            friends = User.objects.exclude(id=self.request.user.id)
+
+        return friends
+
+
 @login_required
 def users_friends_post(request, user_id):
+    '''
+        This is the friends logic post to send friend request, accept/decline friend request or delete friend.
+    '''
     friend_request_from_user = FriendList.objects.select_related(
         'friend', 'user').filter(friend=request.user, user_id=user_id)
 
@@ -233,53 +346,3 @@ def users_friends_post(request, user_id):
             friend_request_from_user.delete()
 
     return redirect('user_details', id=user_id)
-
-
-class Friends(PaginationMixin, ListView):
-    paginate_by = 16
-    template_name = 'users/friends.html'
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        accept = self.request.GET.get('accept')
-
-        if accept=='True':
-            friends = FriendList.objects.select_related('friend', 'user').filter(
-                Q(user=self.request.user) | Q(friend=self.request.user), accept=True)
-        elif accept=='False':
-            friends = FriendList.objects.select_related('friend', 'user').filter(
-                Q(user=self.request.user) | Q(friend=self.request.user), accept=False)
-        else:
-            friends = FriendList.objects.select_related('friend', 'user').filter(
-                Q(user=self.request.user) | Q(friend=self.request.user))
-
-        return friends
-
-
-class UserSearch(PaginationMixin, ListView):
-    paginate_by = 16
-    template_name = 'users/user_search.html'
-    # filter_backends = (filters.SearchFilter,)
-    search_fields = ('username', 'first_name', 'last_name', 'email')
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        try:
-            user_name = self.request.GET.get('user_name')
-        except:
-            user_name = ''
-
-        if(user_name and user_name != ''):
-            friends = User.objects.distinct().exclude(id=self.request.user.id).filter(
-                Q(first_name__icontains=user_name) | Q(last_name__icontains=user_name) |
-                Q(email__icontains=user_name))
-        else:
-            friends = User.objects.exclude(id=self.request.user.id)
-
-        return friends

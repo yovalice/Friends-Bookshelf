@@ -10,10 +10,12 @@
             <hr/>
             <form method="POST" action="{% url 'forgot' %}">
                 {% csrf_token %}
+                <!-- Form error messages -->
                 <div class="col-xs-12 mx-auto block">
                     {% include "common/message.html" %}
                 </div>
 
+                <!-- Load Form from the view.py -->
                 {% bootstrap_form form %}
 
                 <div class="text-center">

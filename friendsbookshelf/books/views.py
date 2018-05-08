@@ -17,38 +17,31 @@ from users.models import BookRecommendedByFriend, FriendList
 
 
 def books_list(request):
-    # max_results = 39
-
-    # try:
-    #     page = int(request.GET.get('page', 1))
-
-    #     if int(page >= 2):
-    #         start_index = int(max_results) * (page-1)
-    #     else:
-    #         start_index = '0'
-
-    # except PageNotAnInteger:
-        # start_index = '0'
-
+    '''
+        Search books page page.
+    '''
+    # Get Search Value
     q = request.GET.get('q')
 
-    params = '?maxResults=39&startIndex=0&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
+    # Set parameters for api call
+    params = '?maxResults=39&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
 
+    # Get books from api call in json format
     books = requests.get(settings.GOOGLE_BOOKS_API + params).json
 
-    # return render(request, 'books/list.html',
-    #               {'books': books,
-    #                'q': q,
-    #                'start_index': start_index,
-    #                'page': page})
     return render(request, 'books/list.html',
                   {'books': books,
                    'q': q})
 
 
 def books_detail(request, volume_id):
+    '''
+        Book detail page page.
+    '''
+    # Google api call to get the book information
     book = requests.get(settings.GOOGLE_BOOKS_API + volume_id).json()
-    
+
+    # If the user is logged in check if he liked/disliked, added to wishlist the book
     if request.user.is_authenticated:
         read = BooksRead.objects.filter(user=request.user, book__google_id=volume_id).first()
         wishlist = BookWish.objects.filter(user=request.user, book__google_id=volume_id).exists()
@@ -66,8 +59,74 @@ def books_detail(request, volume_id):
                    'friends': friends})
 
 
+class BooksWishlist(PaginationMixin, ListView):
+    '''
+        Book user added to Wishlist list page.
+    '''
+    template_name = 'books/wishlist.html'
+    paginate_by = 6
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        # Get all the Bookwish from the logged in user
+        return BookWish.objects.select_related('book').filter(user=self.request.user)
+
+
+class BooksLiked(PaginationMixin, ListView):
+    '''
+        Book users Liked list page.
+    '''
+    template_name = 'books/liked.html'
+    paginate_by = 6
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        # Get liked filter
+        liked = self.request.GET.get('liked')
+
+        # If there is no filter, get all the Books Liked from the logged in user,
+        # if the liked filter is True get only the book the user liked
+        # if the liked filter is False get only the book the user dosen't liked
+        if liked=='True':
+            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user, liked=True)
+        elif liked=='False':
+            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user, liked=False)
+        else:
+            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user)
+
+        return books_read
+
+
+class RecommendedBooks(PaginationMixin, ListView):
+    '''
+        Book Recommended by other users page.
+    '''
+    template_name = 'books/recommended_books.html'
+    paginate_by = 6
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        # Get all the recommended Books from the logged in user
+        recommended_books = BookRecommendedByFriend.objects.select_related(
+            'book', 'friend', 'user').filter(user=self.request.user)
+
+        return recommended_books
+
+
 @login_required
 def books_like_dislike_post(request, volume_id, book_name):
+    '''
+        Book Like/Dislike button logic.
+    '''
     liked_var = request.POST.get('liked')
 
     book_liked = BooksRead.objects.filter(user=request.user, book__google_id=volume_id)
@@ -96,6 +155,9 @@ def books_like_dislike_post(request, volume_id, book_name):
 
 @login_required
 def books_wishlist_post(request, volume_id, book_name):
+    '''
+        Book Wishlist button logic.
+    '''
     book_liked = BookWish.objects.filter(user=request.user, book__google_id=volume_id)
 
     if book_liked.exists():
@@ -115,6 +177,9 @@ def books_wishlist_post(request, volume_id, book_name):
 
 @login_required
 def books_recommend_post(request, volume_id, book_name, user_id):
+    '''
+        Recommended books post logic
+    '''
     recommended_book = BookRecommendedByFriend.objects.select_related(
         'book', 'friend', 'user').filter(user=user_id, friend=request.user, book__google_id=volume_id)
     user = User.objects.get(id=user_id)
@@ -132,51 +197,3 @@ def books_recommend_post(request, volume_id, book_name, user_id):
 
         messages.success(request, 'The book with the title ' + book_name + ' was recommended to the user ' + user.first_name + ' ' + user.last_name + '.')
     return redirect('books_detail', volume_id=volume_id)
-
-
-class BooksWishlist(PaginationMixin, ListView):
-    template_name = 'books/wishlist.html'
-    paginate_by = 6
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        return BookWish.objects.select_related('book').filter(user=self.request.user)
-
-
-class BooksLiked(PaginationMixin, ListView):
-    template_name = 'books/liked.html'
-    paginate_by = 6
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        liked = self.request.GET.get('liked')
-
-        if liked=='True':
-            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user, liked=True)
-        elif liked=='False':
-            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user, liked=False)
-        else:
-            books_read = BooksRead.objects.select_related('book').filter(user=self.request.user)
-
-        return books_read
-
-
-class RecommendedBooks(PaginationMixin, ListView):
-    template_name = 'books/recommended_books.html'
-    paginate_by = 6
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        recommended_books = BookRecommendedByFriend.objects.select_related(
-            'book', 'friend', 'user').filter(user=self.request.user)
-
-        return recommended_books

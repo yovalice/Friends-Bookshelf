@@ -9,9 +9,12 @@
     <hr/>
 
     <form method="POST" enctype="multipart/form-data">
-        {% include "common/message.html" %}
-        {% csrf_token %}
-        {% bootstrap_form form %}
+      <!-- Form error messages -->
+      {% include "common/message.html" %}
+      {% csrf_token %}
+      
+      <!-- Load Form from the view.py -->
+      {% bootstrap_form form %}
 
       <div class="text-center">
         {% buttons %}

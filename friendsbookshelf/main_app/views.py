@@ -21,6 +21,10 @@ from main_app.forms import UserPostForm
 
 
 def home_page(request):
+    '''
+        This is the Home page and newsfeed (if the user is logged in) page logic.
+    '''
+    # Books suggestion array
     books_array = [
         'Harry Potter',
         'Lord of the rings',
@@ -46,15 +50,18 @@ def home_page(request):
         'Gabriel García Márquez'
     ]
 
+    # Get one random value from the books suggestions array
     q = random.choice(books_array)
 
+    # Setup parameters for the google api call
     params = '?maxResults=6&q=' + q + '&fields=items/volumeInfo/title,items/volumeInfo/imageLinks,items/id'
 
+    # Get books from google api call
     books = requests.get(settings.GOOGLE_BOOKS_API + params).json
 
-    print(settings.GOOGLE_BOOKS_API + params)
-
+    # If the user is logged in send the user to the newsfeed
     if request.user.is_authenticated:
+        # If the user in the newsfeed inserted a new post.
         if request.method == 'POST':
             form = UserPostForm(user=request.user, data=request.POST)
 
@@ -71,21 +78,24 @@ def home_page(request):
 
                 return HttpResponseRedirect('/')
         else:
+            # Load the post Form
             form = UserPostForm(request.user)
 
+        # Get user friend list to check
         friend_list = FriendList.objects.select_related(
             'friend', 'user').filter(Q(user=request.user) | Q(friend=request.user))
 
-        # posts
+        # Get all the friends and user posts inserted ordered by the most recent one
         posts = Post.objects.distinct().select_related('book', 'book__book', 'user').prefetch_related(
             'comments', 'comments__user').filter(Q(user=request.user) |
                     Q(user__in=friend_list.filter(accept=True).values_list('friend__pk', flat=True)) |
                     Q(user__in=friend_list.filter(accept=True).values_list('user__pk', flat=True))
                     ).order_by('-created_date')[:8]
 
+        # Start friend suggest logic (based on books both likes)
         users_from_friend_list = User.objects.filter(
             Q(pk__in=friend_list.values_list('friend__pk', flat=True)) | Q(pk__in=friend_list.values_list('user__pk', flat=True)))
-        
+
         my_books_read = BooksRead.objects.filter(user=request.user, liked=True)
 
         friends_with_books_read = BooksRead.objects.distinct().filter(
@@ -94,6 +104,7 @@ def home_page(request):
         friends_suggest = User.objects.filter(pk__in=friends_with_books_read).exclude(
             Q(pk=request.user.pk) |
             Q(pk__in=users_from_friend_list.values_list('pk', flat=True)))[:6]
+        # End friend Suggest list
 
         return render(request, 'newsfeed.html', {'posts': posts, 'friends_suggest': friends_suggest, 'form': form, 'books': books})
     else:
@@ -101,7 +112,40 @@ def home_page(request):
                     {'books': books})
 
 
+@csrf_exempt
+def post_comment(request):
+    '''
+        This is the insert comment into a post logic from the newsfeed.
+    '''
+    if request.is_ajax():
+        # Get text value from the input
+        text = request.POST.get('text')
+
+        # Create new comment
+        comment = Comment.objects.create(text=text, user=request.user)
+
+        # Get post and add the comment to the post
+        post = Post.objects.get(id=request.POST.get('post_id'))
+        post.comments.add(comment)
+
+        return JsonResponse({'text': text, 'user_id': request.user.id, 'full_name': request.user.first_name + ' ' + request.user.last_name})
+
+
+@csrf_exempt
+def delete_post(request, post_id):
+    '''
+        This is the Delete Post logic from the newsfeed.
+    '''
+    # Delete post call
+    Post.objects.get(id=post_id, user=request.user).delete()
+    messages.success(request, 'Your post was deleted successfully.')
+    return redirect('home') 
+
+
 def load_more_posts(request, page):
+    '''
+        Load more posts ajax call.
+    '''
     if request.is_ajax():
         friend_list = FriendList.objects.select_related(
             'friend').filter(user=request.user, accept=True).values_list('friend', flat=True)
@@ -113,24 +157,4 @@ def load_more_posts(request, page):
 
         posts = paginator.page(int(page))
 
-        print(posts.has_next())
-        print(posts)
-
         return JsonResponse({'posts': serializers.serialize("json", posts.object_list), 'has_next': posts.has_next()})
-
-
-@csrf_exempt
-def post_comment(request):
-    if request.is_ajax():
-        text = request.POST.get('text')
-        comment = Comment.objects.create(text=text, user=request.user)
-        post = Post.objects.get(id=request.POST.get('post_id'))
-        post.comments.add(comment)
-        return JsonResponse({'text': text, 'user_id': request.user.id, 'full_name': request.user.first_name + ' ' + request.user.last_name})
-
-
-@csrf_exempt
-def delete_post(request, post_id):
-    Post.objects.get(id=post_id, user=request.user).delete()
-    messages.success(request, 'Your post was deleted successfully.')
-    return redirect('home') 
