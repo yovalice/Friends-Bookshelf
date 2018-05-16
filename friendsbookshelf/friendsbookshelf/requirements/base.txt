@@ -7,3 +7,4 @@ pilkit==2.0
 Pillow==5.0.0
 requests==2.18.4
 six==1.11.0
+unicodecsv==0.14.1

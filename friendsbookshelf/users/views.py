@@ -84,12 +84,12 @@ def login(request):
             userObj = form.cleaned_data
             username = userObj['username']
             password = userObj['password']
-            user = User.objects.filter(Q(username=username) | Q(email=username))
+            user = authenticate(username=username, password=password)
 
             # if the user exist then we login the user in the application,
             # if the user does not exist we show an error message.
-            if user.exists():
-                auth_login(request, user.first())
+            if user:
+                auth_login(request, user)
                 return HttpResponseRedirect('/')
             else:
                 data = {'form': form}

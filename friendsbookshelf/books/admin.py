@@ -2,12 +2,14 @@ from django.contrib import admin
 from .models import Book
 from .models import BooksRead 
 from .models import BookWish
+from main_app.actions import export_as_csv_action
 
 
 class BookAdmin(admin.ModelAdmin):
     search_fields = ['id', 'name', 'google_id']
     list_display = ('id', 'name', 'google_id')
     list_display_links = ('id', 'name', 'google_id')
+    actions = [export_as_csv_action("CSV Export", fields=['id', 'name'])]
 
 
 class BooksReadsAdmin(admin.ModelAdmin):
@@ -17,6 +19,7 @@ class BooksReadsAdmin(admin.ModelAdmin):
     list_filter = ('liked',)
     list_select_related = ('book', 'user')
     raw_id_fields = ('user', 'book')
+    actions = [export_as_csv_action("CSV Export", fields=['id', 'book', 'user', 'liked'])]
 
 
 class BookWishAdmin(admin.ModelAdmin):
@@ -25,6 +28,7 @@ class BookWishAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'book')
     list_select_related = ('book', 'user')
     raw_id_fields = ('user', 'book')
+    actions = [export_as_csv_action("CSV Export", fields=['id', 'book', 'user'])]
 
 
 admin.site.register(Book, BookAdmin)

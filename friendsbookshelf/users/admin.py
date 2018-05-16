@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import FriendList
 from .models import BookRecommendedByFriend
 from .models import User
+from main_app.actions import export_as_csv_action
 
 
 class FriendListAdmin(admin.ModelAdmin):
@@ -11,6 +12,7 @@ class FriendListAdmin(admin.ModelAdmin):
     list_filter = ('accept',)
     raw_id_fields = ('user', 'friend')
     list_select_related = ('user', 'friend')
+    actions = [export_as_csv_action("CSV Export", fields=['id', 'user', 'friend', 'accept', 'created_date'])]
 
 
 class BookRecommendedByFriendAdmin(admin.ModelAdmin):
@@ -19,6 +21,7 @@ class BookRecommendedByFriendAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'friend', 'user', 'book')
     list_select_related = ('book', 'friend', 'user')
     raw_id_fields = ('book', 'friend', 'user')
+    actions = [export_as_csv_action("CSV Export", fields=['id', 'friend', 'user', 'book'])]
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -26,6 +29,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'username', 'first_name', 'last_name', 'email')
     list_display_links = ('id', 'username')
     filter_horizontal = ('groups', 'user_permissions')
+    actions = [export_as_csv_action("CSV Export", fields=['id', 'username', 'first_name', 'last_name', 'email'])]
 
 
 admin.site.register(FriendList, FriendListAdmin)
